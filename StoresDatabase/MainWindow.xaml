@@ -5,8 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StoresDatabase"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
-    <Grid>
+        Title="MainWindow" Height="700" Width="1200"
+        WindowStartupLocation="CenterScreen">
+    <Grid Margin="10,0,0,0">
+        <Button x:Name="FileOpen_Btn" Content="OpenFile" HorizontalAlignment="Left" Margin="88,586,0,0" VerticalAlignment="Top" Width="75" Click="FileOpen_Btn_Click"/>
         
+            <FlowDocumentReader Name ="DocReader" Margin="191,86,164,138"  >
+            <FlowDocument Name="ViewDoc" ></FlowDocument>
+            </FlowDocumentReader>
+
     </Grid>
 </Window>
