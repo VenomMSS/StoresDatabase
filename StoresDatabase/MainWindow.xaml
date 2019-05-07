@@ -13,6 +13,7 @@
             <FlowDocumentReader Name ="DocReader" Margin="191,86,164,138"  >
             <FlowDocument Name="ViewDoc" ></FlowDocument>
             </FlowDocumentReader>
+        <Button x:Name="Exit_btn" Content="Exit" HorizontalAlignment="Left" Margin="993,591,0,0" VerticalAlignment="Top" Width="75" Click="Exit_btn_Click"/>
 
     </Grid>
 </Window>
