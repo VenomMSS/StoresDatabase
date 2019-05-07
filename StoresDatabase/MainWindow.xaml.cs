@@ -29,7 +29,7 @@ namespace StoresDatabase
         SQLiteConnection database;
         SQLiteDataAdapter partsAdapter, locationAdapter, supplierAdapter;
         String Connection;
-        Item part;
+        Item part, part2;
         Location location;
         Supplier supplier;
         ItemType partType;
