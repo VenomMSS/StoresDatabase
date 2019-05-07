@@ -1,0 +1,17 @@
+﻿<Window x:Class="StoresDatabase.EditItemTypeDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StoresDatabase"
+        mc:Ignorable="d"
+        Title="EditItemTypeDialog" Height="200" Width="300">
+    <Grid>
+        <TextBox x:Name="iDTBox" HorizontalAlignment="Left" Height="19" Margin="122,23,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="58" IsEnabled="False"/>
+        <TextBox x:Name="typeNameTBox" HorizontalAlignment="Left" Height="19" Margin="122,47,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="58" RenderTransformOrigin="0.5,1.579"/>
+        <ComboBox x:Name="typeGroupComboBox" HorizontalAlignment="Left" Height="23" Margin="122,71,0,0" VerticalAlignment="Top" Width="103"/>
+        <Button x:Name="OK_Btn" Content="OK" HorizontalAlignment="Left" Height="22" Margin="24,134,0,0" VerticalAlignment="Top" Width="144" Background="#FF56B433" Click="OK_Btn_Click"/>
+        <Button x:Name="cancel_Btn" Content="Cancel" HorizontalAlignment="Left" Height="22" Margin="199,134,0,0" VerticalAlignment="Top" Width="50" IsCancel="True" Background="#FFF71717"/>
+
+    </Grid>
+</Window>

@@ -15,7 +15,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 using System.Data.SQLite;
+using System.Collections;
 using StockDBClasses;
+
 
 
 namespace StoresDatabase
@@ -165,7 +167,8 @@ namespace StoresDatabase
 
         }
 
-     
+        
+
         private void CreateAllTables()
         {
             // create all tables in database
@@ -203,6 +206,8 @@ namespace StoresDatabase
             Cmd.ExecuteNonQuery();
         }
 
+        
+
         private void DropAllTables()
         {
             // delete all tables in database
@@ -221,6 +226,117 @@ namespace StoresDatabase
             Cmd.ExecuteNonQuery();           
         
         }
+
+       
+
+        private void newItem_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            EditItemDialog itemDialog = new EditItemDialog();
+            if (itemDialog.ShowDialog() == true)
+            {
+                // read answer string and paste it to the Flow Document
+                String[] results = itemDialog.Answer.Split(',');
+                Paragraph para = new Paragraph();
+                para.Inlines.Add(itemDialog.Answer + '\n' + '\r');
+                foreach (String s in results)
+                {
+                    para.Inlines.Add(s + '\n');
+                }
+                para.Inlines.Add(" "+ '\n' + '\r');
+                ViewDoc.Blocks.Add(para);
+            }
+        }
+
+       
+
+        private void editItem_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            // for testing only, an item is created
+            Item testItem = new Item();
+            
+            // cannot access properties of item . Perhaps need to be explicitly public?
+            // cannot access the propertiess of the item
+            // need to fix
+
+            ArrayList places = new ArrayList();
+            places.Add("Box1"); places.Add("Box2"); places.Add("Box3");
+            ArrayList suppliers = new ArrayList();
+            suppliers.Add("AMOC"); suppliers.Add("AMC"); suppliers.Add("EBAY");
+            ArrayList itemtype = new ArrayList();
+            itemtype.Add("Part m/c"); itemtype.Add("Tool"); itemtype.Add("Tool consumable");
+            
+            EditItemDialog itemDialog = new EditItemDialog(21,"Piston","good","single","123321",1,21.54,"£","true",1,1,1,places,itemtype,suppliers);
+            if (itemDialog.ShowDialog() == true)
+            {
+                // read answer string and paste it to the Flow Document
+                String[] results = itemDialog.Answer.Split(',');
+                Paragraph para = new Paragraph();
+                para.Inlines.Add(itemDialog.Answer + '\n' + '\r');
+                foreach (String s in results)
+                {
+                    para.Inlines.Add(s + '\n');
+                }
+                para.Inlines.Add(" " + '\n' + '\r');
+                ViewDoc.Blocks.Add(para);
+            }
+
+
+        }
+
+        
+        private void newLocation_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            EditLocationDialog locationDialog = new EditLocationDialog();
+            if (locationDialog.ShowDialog() == true)
+            {
+                // read answer string and paste it to the Flow Document
+                String[] results = locationDialog.Answer.Split(',');
+                Paragraph para = new Paragraph();
+                para.Inlines.Add(locationDialog.Answer + '\n' + '\r');
+                foreach (String s in results)
+                {
+                    para.Inlines.Add(s + '\n');
+                }
+                para.Inlines.Add(" " + '\n' + '\r');
+                ViewDoc.Blocks.Add(para);
+
+            }
+        }
+
+        private void newType_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            EditItemTypeDialog typeDialog = new EditItemTypeDialog();
+            if (typeDialog.ShowDialog() == true)
+            {
+                String[] results = typeDialog.Answer.Split(',');
+                Paragraph para = new Paragraph();
+                para.Inlines.Add(typeDialog.Answer + '\n' + '\r');
+                foreach (String s in results)
+                {
+                    para.Inlines.Add(s + '\n');
+                }
+                para.Inlines.Add(" " + '\n' + '\r');
+                ViewDoc.Blocks.Add(para);
+            }
+        }
+
+        private void newSupplier_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            EditSupplierDialog supplierDialog = new EditSupplierDialog();
+            if (supplierDialog.ShowDialog() == true)
+            {
+                String[] results = supplierDialog.Answer.Split(',');
+                Paragraph para = new Paragraph();
+                para.Inlines.Add(supplierDialog.Answer + '\n' + '\r');
+                foreach (String s in results)
+                {
+                    para.Inlines.Add(s + '\n');
+                }
+                para.Inlines.Add(" " + '\n' + '\r');
+                ViewDoc.Blocks.Add(para);
+            }
+        }
+
 
         private void Exit_btn_Click(object sender, RoutedEventArgs e)
         {

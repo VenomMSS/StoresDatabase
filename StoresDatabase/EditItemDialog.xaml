@@ -1,0 +1,26 @@
+﻿<Window x:Class="StoresDatabase.EditItemDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StoresDatabase"
+        mc:Ignorable="d"
+        Title="EditItemDialog" Height="350" Width="300">
+    <Grid>
+        <TextBox x:Name="iDTBox" HorizontalAlignment="Left" Height="23" Margin="84,16,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="61" IsEnabled="False"/>
+        <TextBox x:Name="nameTBox" HorizontalAlignment="Left" Height="21" Margin="84,44,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="99"/>
+        <TextBox x:Name="descTBox" HorizontalAlignment="Left" Height="21" Margin="84,70,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="177"/>
+        <TextBox x:Name="unitTBox" HorizontalAlignment="Left" Height="21" Margin="84,96,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="99"/>
+        <TextBox x:Name="partnoTBox" HorizontalAlignment="Left" Height="21" Margin="84,122,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="99"/>
+        <TextBox x:Name="amountTBox" HorizontalAlignment="Left" Height="21" Margin="84,148,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="99"/>
+        <TextBox x:Name="priceTBox" HorizontalAlignment="Left" Height="21" Margin="151,174,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="99"/>
+        <TextBox x:Name="currencyTBox" HorizontalAlignment="Left" Height="21" Margin="84,174,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="53"/>
+        <TextBox x:Name="statusTBox" HorizontalAlignment="Left" Height="21" Margin="211,16,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="61" IsEnabled="False"/>
+        <ComboBox x:Name="locComboBox" HorizontalAlignment="Left" Height="20" Margin="84,208,0,0" VerticalAlignment="Top" Width="99"/>
+        <ComboBox x:Name="typeComboBox" HorizontalAlignment="Left" Height="20" Margin="84,233,0,0" VerticalAlignment="Top" Width="99"/>
+        <ComboBox x:Name="supplierComboBox" HorizontalAlignment="Left" Height="20" Margin="84,258,0,0" VerticalAlignment="Top" Width="99"/>
+        <Button x:Name="OK_btn" Content="OK" HorizontalAlignment="Left" Height="20" Margin="27,289,0,0" VerticalAlignment="Top" Width="169" IsDefault="True" Background="#FF84CF61" Click="OK_btn_Click"/>
+        <Button x:Name="cancelBtn" Content="Cancel" HorizontalAlignment="Left" Height="20" Margin="222,289,0,0" VerticalAlignment="Top" Width="50" IsCancel="True" Background="#FFF53207"/>
+
+    </Grid>
+</Window>

@@ -8,12 +8,20 @@
         Title="MainWindow" Height="700" Width="1200"
         WindowStartupLocation="CenterScreen">
     <Grid Margin="10,0,0,0">
-        <Button x:Name="FileOpen_Btn" Content="OpenFile" HorizontalAlignment="Left" Margin="88,586,0,0" VerticalAlignment="Top" Width="75" Click="FileOpen_Btn_Click"/>
-        
-            <FlowDocumentReader Name ="DocReader" Margin="191,86,164,138"  >
+        <Button x:Name="FileOpen_Btn" Content="OpenFile" HorizontalAlignment="Left" Margin="92,146,0,0" VerticalAlignment="Top" Width="75" Click="FileOpen_Btn_Click"/>
+
+        <FlowDocumentReader Name ="DocReader" Margin="329,46,114,178"  >
             <FlowDocument Name="ViewDoc" ></FlowDocument>
-            </FlowDocumentReader>
+        </FlowDocumentReader>
         <Button x:Name="Exit_btn" Content="Exit" HorizontalAlignment="Left" Margin="993,591,0,0" VerticalAlignment="Top" Width="75" Click="Exit_btn_Click"/>
+        <Button x:Name="newItem_Btn" Content="New Item" HorizontalAlignment="Left" Margin="53,551,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-1.133,0.6" Click="newItem_Btn_Click"/>
+        <Button x:Name="editItem_Btn" Content="Edit item" HorizontalAlignment="Left" Margin="53,591,0,0" VerticalAlignment="Top" Width="75" Height="20" Click="editItem_Btn_Click"/>
+        <Button x:Name="newLocation_Btn" Content="New Location" HorizontalAlignment="Left" Margin="224,551,0,0" VerticalAlignment="Top" Width="75" Click="newLocation_Btn_Click"/>
+        <Button x:Name="editLocation_Btn" Content="Edit Location" HorizontalAlignment="Left" Margin="224,591,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="newType_Btn" Content="New Type" HorizontalAlignment="Left" Margin="400,551,0,0" VerticalAlignment="Top" Width="75" Click="newType_Btn_Click"/>
+        <Button x:Name="editType_Btn" Content="Edit Type" HorizontalAlignment="Left" Margin="400,591,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="newSupplier_Btn" Content="New Supplier" HorizontalAlignment="Left" Margin="558,551,0,0" VerticalAlignment="Top" Width="75" Click="newSupplier_Btn_Click"/>
+        <Button x:Name="editSupplier_Btn" Content="edit Supplier" HorizontalAlignment="Left" Margin="558,591,0,0" VerticalAlignment="Top" Width="75"/>
 
     </Grid>
 </Window>
