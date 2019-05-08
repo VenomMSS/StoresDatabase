@@ -19,7 +19,6 @@ using System.Collections;
 using StockDBClasses;
 
 
-
 namespace StoresDatabase
 {
     /// <summary>
@@ -35,6 +34,7 @@ namespace StoresDatabase
         Location location;
         Supplier supplier;
         ItemType partType;
+        Order order;
         
 
         /// IMPORTANT SQLITE NOTE
