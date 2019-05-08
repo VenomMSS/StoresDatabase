@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Collections;
 
 namespace StoresDatabase
 {
@@ -22,6 +23,23 @@ namespace StoresDatabase
         public EditItemTypeDialog()
         {
             InitializeComponent();
+        }
+
+        // constructor for new type
+        public EditItemTypeDialog(ArrayList types)
+        {
+            InitializeComponent();
+            typeGroupComboBox.ItemsSource = types;
+        }
+
+        //constructor for edit type
+        public EditItemTypeDialog(int id, String TypeName, int index,ArrayList types)
+        {
+            InitializeComponent();
+            iDTBox.Text = id.ToString(); 
+            typeNameTBox.Text = TypeName;
+            typeGroupComboBox.ItemsSource = types;
+            typeGroupComboBox.SelectedIndex = index;
         }
 
         public string Answer

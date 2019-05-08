@@ -5,13 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StoresDatabase"
         mc:Ignorable="d"
-        Title="EditItemTypeDialog" Height="200" Width="300">
+        Title="Item Types" Height="200" Width="300" ResizeMode="NoResize">
     <Grid>
-        <TextBox x:Name="iDTBox" HorizontalAlignment="Left" Height="19" Margin="122,23,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="58" IsEnabled="False"/>
-        <TextBox x:Name="typeNameTBox" HorizontalAlignment="Left" Height="19" Margin="122,47,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="58" RenderTransformOrigin="0.5,1.579"/>
-        <ComboBox x:Name="typeGroupComboBox" HorizontalAlignment="Left" Height="23" Margin="122,71,0,0" VerticalAlignment="Top" Width="103"/>
-        <Button x:Name="OK_Btn" Content="OK" HorizontalAlignment="Left" Height="22" Margin="24,134,0,0" VerticalAlignment="Top" Width="144" Background="#FF56B433" Click="OK_Btn_Click"/>
-        <Button x:Name="cancel_Btn" Content="Cancel" HorizontalAlignment="Left" Height="22" Margin="199,134,0,0" VerticalAlignment="Top" Width="50" IsCancel="True" Background="#FFF71717"/>
+        <TextBox x:Name="iDTBox" HorizontalAlignment="Left" Height="19" Margin="71,23,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="46" IsEnabled="False"/>
+        <TextBox x:Name="typeNameTBox" HorizontalAlignment="Left" Height="19" Margin="71,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190" RenderTransformOrigin="0.5,1.579"/>
+        <ComboBox x:Name="typeGroupComboBox" HorizontalAlignment="Left" Height="23" Margin="71,71,0,0" VerticalAlignment="Top" Width="190"/>
+        <Button x:Name="OK_Btn" Content="OK" HorizontalAlignment="Left" Height="22" Margin="21,134,0,0" VerticalAlignment="Top" Width="147" Background="#FF56B433" Click="OK_Btn_Click"/>
+        <Button x:Name="cancel_Btn" Content="Cancel" HorizontalAlignment="Left" Height="22" Margin="211,134,0,0" VerticalAlignment="Top" Width="50" IsCancel="True" Background="#FFF71717"/>
+        <Label x:Name="IDlabel" Content="ID" HorizontalAlignment="Left" Height="30" Margin="10,10,0,0" VerticalAlignment="Top" Width="29" RenderTransformOrigin="-0.31,0.433"/>
+        <Label x:Name="typeLabel" Content="Type " HorizontalAlignment="Left" Height="30" Margin="10,42,0,0" VerticalAlignment="Top" Width="56" RenderTransformOrigin="0.552,1.533"/>
+        <Label x:Name="typegroup" Content="Group " HorizontalAlignment="Left" Height="30" Margin="10,71,0,0" VerticalAlignment="Top" Width="56" RenderTransformOrigin="0.552,1.533"/>
 
     </Grid>
 </Window>

@@ -5,16 +5,22 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StoresDatabase"
         mc:Ignorable="d"
-        Title="EditSupplierDialog" Height="300" Width="300">
+        Title="Suppliers" Height="300" Width="320" ResizeMode="NoResize">
     <Grid>
-        <TextBox x:Name="iDTBox" HorizontalAlignment="Left" Height="18" Margin="138,24,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="78" IsEnabled="False"/>
-        <TextBox x:Name="nameTBox" HorizontalAlignment="Left" Height="18" Margin="138,47,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="78"/>
-        <TextBox x:Name="addressTBox" HorizontalAlignment="Left" Height="18" Margin="138,68,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="78"/>
-        <TextBox x:Name="websiteTBox" HorizontalAlignment="Left" Height="18" Margin="138,91,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="78"/>
-        <TextBox x:Name="emailTBox" HorizontalAlignment="Left" Height="18" Margin="138,114,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="78"/>
-        <TextBox x:Name="telphoneTBox" HorizontalAlignment="Left" Height="18" Margin="138,137,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="78"/>
-        <Button x:Name="OK_Btn" Content="OK" HorizontalAlignment="Left" Height="23" Margin="29,190,0,0" VerticalAlignment="Top" Width="132" IsDefault="True" Background="#FF74C745" Click="OK_Btn_Click"/>
-        <Button x:Name="cancel_Btn" Content="Cancel" HorizontalAlignment="Left" Height="23" Margin="216,190,0,0" VerticalAlignment="Top" Width="51" IsCancel="True" Background="#FFEC1616"/>
+        <TextBox x:Name="iDTBox" HorizontalAlignment="Left" Height="18" Margin="93,24,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="48" IsEnabled="False"/>
+        <TextBox x:Name="nameTBox" HorizontalAlignment="Left" Height="18" Margin="93,47,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
+        <TextBox x:Name="addressTBox" HorizontalAlignment="Left" Height="57" Margin="93,68,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
+        <TextBox x:Name="websiteTBox" HorizontalAlignment="Left" Height="18" Margin="93,130,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
+        <TextBox x:Name="emailTBox" HorizontalAlignment="Left" Height="18" Margin="93,153,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
+        <TextBox x:Name="telphoneTBox" HorizontalAlignment="Left" Height="18" Margin="93,176,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
+        <Button x:Name="OK_Btn" Content="OK" HorizontalAlignment="Left" Height="23" Margin="10,222,0,0" VerticalAlignment="Top" Width="160" IsDefault="True" Background="#FF74C745" Click="OK_Btn_Click"/>
+        <Button x:Name="cancel_Btn" Content="Cancel" HorizontalAlignment="Left" Height="23" Margin="232,222,0,0" VerticalAlignment="Top" Width="51" IsCancel="True" Background="#FFEC1616"/>
+        <Label x:Name="idlabel" Content="ID" HorizontalAlignment="Left" Height="32" Margin="10,24,0,0" VerticalAlignment="Top" Width="46"/>
+        <Label x:Name="namelabel" Content="Name" HorizontalAlignment="Left" Height="32" Margin="9,42,0,0" VerticalAlignment="Top" Width="46"/>
+        <Label x:Name="addresslabel1" Content="Address" HorizontalAlignment="Left" Height="32" Margin="8,68,0,0" VerticalAlignment="Top" Width="56"/>
+        <Label x:Name="weblabel" Content="Website" HorizontalAlignment="Left" Height="32" Margin="8,130,0,0" VerticalAlignment="Top" Width="56" RenderTransformOrigin="0.543,1.469"/>
+        <Label x:Name="emaillabel" Content="Email" HorizontalAlignment="Left" Height="32" Margin="10,153,0,0" VerticalAlignment="Top" Width="56" RenderTransformOrigin="0.543,1.469"/>
+        <Label x:Name="tellabel_Copy1" Content="Telephone" HorizontalAlignment="Left" Height="32" Margin="9,176,0,0" VerticalAlignment="Top" Width="79" RenderTransformOrigin="0.543,1.469"/>
 
     </Grid>
 </Window>

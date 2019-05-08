@@ -30,18 +30,20 @@ namespace StoresDatabase
         SQLiteConnection database;
         SQLiteDataAdapter partsAdapter, locationAdapter, supplierAdapter;
         String Connection;
-        Item part, part2;
+        Item testItem,part, part2;
         Location location;
         Supplier supplier;
         ItemType partType;
         Order order;
-        
+        ArrayList places;
+        ArrayList suppliers;
+        ArrayList itemtype;
 
         /// IMPORTANT SQLITE NOTE
         /// IT IS ABSOLUTELY ESSENTIAL THAT THE TABLE AND FIELD VALUE
         /// ONLY CONTAIN A-Z AND 1-0
         /// SPACES, PUNCTUATION ETC WILL CAUSE A FAIL IN CREATING THE TABLE
-        
+
         // Database tables
         private static String table_parts = "Item";
         private static String table_parttype = "ItemType";
@@ -77,9 +79,17 @@ namespace StoresDatabase
         private static String field_parttype = "ItemType";
         private static String field_typeGroupFK = "TypeGroup";
 
+
+
         public MainWindow()
         {
             InitializeComponent();
+            places = new ArrayList();
+            places.Add("Box1"); places.Add("Box2"); places.Add("Box3");
+            suppliers = new ArrayList();
+            suppliers.Add("AMOC"); suppliers.Add("AMC"); suppliers.Add("EBAY");
+            itemtype = new ArrayList();
+            itemtype.Add("Part m/c"); itemtype.Add("Tool"); itemtype.Add("Tool consumable");
 
             // version number in connection string  is the SQLite version and needs to be set to 3.
             Connection = "Data Source =c:\\Databases\\Stock.db;Version=3;New=True;Compress=True;";
@@ -231,7 +241,7 @@ namespace StoresDatabase
 
         private void newItem_Btn_Click(object sender, RoutedEventArgs e)
         {
-            EditItemDialog itemDialog = new EditItemDialog();
+            EditItemDialog itemDialog = new EditItemDialog(places, itemtype, suppliers);
             if (itemDialog.ShowDialog() == true)
             {
                 // read answer string and paste it to the Flow Document
@@ -252,20 +262,19 @@ namespace StoresDatabase
         private void editItem_Btn_Click(object sender, RoutedEventArgs e)
         {
             // for testing only, an item is created
-            Item testItem = new Item();
+            testItem = new Item();
+            testItem.ID = 22;                testItem.Name = "Sparkplug";
+            testItem.Description = "good";   testItem.Unit = "box of 12";
+            testItem.Amount = 2;             testItem.Currency = "€";
+            testItem.Price = 22.45;          testItem.PartNumber = "123456";
+            testItem.Status = true;          testItem.typeFK = 0;
+            testItem.locFK = 1;              testItem.supFK = 1;
             
-            // cannot access properties of item . Perhaps need to be explicitly public?
-            // cannot access the propertiess of the item
-            // need to fix
-
-            ArrayList places = new ArrayList();
-            places.Add("Box1"); places.Add("Box2"); places.Add("Box3");
-            ArrayList suppliers = new ArrayList();
-            suppliers.Add("AMOC"); suppliers.Add("AMC"); suppliers.Add("EBAY");
-            ArrayList itemtype = new ArrayList();
-            itemtype.Add("Part m/c"); itemtype.Add("Tool"); itemtype.Add("Tool consumable");
+                        
             
-            EditItemDialog itemDialog = new EditItemDialog(21,"Piston","good","single","123321",1,21.54,"£","true",1,1,1,places,itemtype,suppliers);
+            EditItemDialog itemDialog = new EditItemDialog(testItem.ID,testItem.Name,testItem.Description,testItem.Unit,
+                testItem.PartNumber,testItem.Amount,testItem.Price,testItem.Currency,testItem.Status.ToString(),
+                testItem.locFK,testItem.typeFK,testItem.supFK,places,itemtype,suppliers);
             if (itemDialog.ShowDialog() == true)
             {
                 // read answer string and paste it to the Flow Document
@@ -286,7 +295,7 @@ namespace StoresDatabase
         
         private void newLocation_Btn_Click(object sender, RoutedEventArgs e)
         {
-            EditLocationDialog locationDialog = new EditLocationDialog();
+            EditLocationDialog locationDialog = new EditLocationDialog(places);
             if (locationDialog.ShowDialog() == true)
             {
                 // read answer string and paste it to the Flow Document
@@ -303,9 +312,67 @@ namespace StoresDatabase
             }
         }
 
+        private void editLocation_Btn_DragOver(object sender, DragEventArgs e)
+        {
+            // crete a location for testing only 
+            location = new Location();
+            location.ID = 31;
+            location.Name = "AJS1";
+            location.Type = "PlasticBox";
+            location.groupFK = 1;
+
+            EditLocationDialog locationDialog = new EditLocationDialog(location.ID, location.Name, location.Type, location.groupFK, places);
+
+            if (locationDialog.ShowDialog() == true)
+            {
+                // read answer string and paste it to the Flow Document
+                String[] results = locationDialog.Answer.Split(',');
+                Paragraph para = new Paragraph();
+                para.Inlines.Add(locationDialog.Answer + '\n' + '\r');
+                foreach (String s in results)
+                {
+                    para.Inlines.Add(s + '\n');
+                }
+                para.Inlines.Add(" " + '\n' + '\r');
+                ViewDoc.Blocks.Add(para);
+
+            }
+
+        }
+
+        private void editLocation_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            // crete a location for testing only 
+            location = new Location();
+            location.ID = 31;
+            location.Name = "AJS1";
+            location.Type = "PlasticBox";
+            location.groupFK = 1;
+
+            EditLocationDialog locationDialog = new EditLocationDialog(location.ID, location.Name, location.Type, location.groupFK, places);
+
+            if (locationDialog.ShowDialog() == true)
+            {
+                // read answer string and paste it to the Flow Document
+                String[] results = locationDialog.Answer.Split(',');
+                Paragraph para = new Paragraph();
+                para.Inlines.Add(locationDialog.Answer + '\n' + '\r');
+                foreach (String s in results)
+                {
+                    para.Inlines.Add(s + '\n');
+                }
+                para.Inlines.Add(" " + '\n' + '\r');
+                ViewDoc.Blocks.Add(para);
+
+            }
+
+        }
+
+        
+
         private void newType_Btn_Click(object sender, RoutedEventArgs e)
         {
-            EditItemTypeDialog typeDialog = new EditItemTypeDialog();
+            EditItemTypeDialog typeDialog = new EditItemTypeDialog(itemtype);
             if (typeDialog.ShowDialog() == true)
             {
                 String[] results = typeDialog.Answer.Split(',');
@@ -320,9 +387,59 @@ namespace StoresDatabase
             }
         }
 
+
+        private void editType_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            // type created for testing only
+            partType = new ItemType();
+            partType.ID = 4;
+            partType.Name = "AJS Part";
+            partType.typeGroupFK = 1;
+
+            EditItemTypeDialog typeDialog = new EditItemTypeDialog(partType.ID, partType.Name,partType.typeGroupFK, itemtype);
+            if (typeDialog.ShowDialog() == true)
+            {
+                String[] results = typeDialog.Answer.Split(',');
+                Paragraph para = new Paragraph();
+                para.Inlines.Add(typeDialog.Answer + '\n' + '\r');
+                foreach (String s in results)
+                {
+                    para.Inlines.Add(s + '\n');
+                }
+                para.Inlines.Add(" " + '\n' + '\r');
+                ViewDoc.Blocks.Add(para);
+            }
+        }
+
+
         private void newSupplier_Btn_Click(object sender, RoutedEventArgs e)
         {
             EditSupplierDialog supplierDialog = new EditSupplierDialog();
+            if (supplierDialog.ShowDialog() == true)
+            {
+                String[] results = supplierDialog.Answer.Split(',');
+                Paragraph para = new Paragraph();
+                para.Inlines.Add(supplierDialog.Answer + '\n' + '\r');
+                foreach (String s in results)
+                {
+                    para.Inlines.Add(s + '\n');
+                }
+                para.Inlines.Add(" " + '\n' + '\r');
+                ViewDoc.Blocks.Add(para);
+            }
+        }
+
+        private void editSupplier_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            // create a supplier for testing only
+            supplier = new Supplier();
+            supplier.Name = "AMC Classic Spares, Steven Sorby";
+            supplier.Address = "Not knowne, Some in , England";
+            supplier.Website = "www.amcclassicspares.com";
+            supplier.Email = "spares@amcclassicspares.com";
+            supplier.phone = "(+44) 01462 811770";
+
+            EditSupplierDialog supplierDialog = new EditSupplierDialog(supplier.ID, supplier.Name, supplier.Address, supplier.Website,supplier.Email,supplier.phone);
             if (supplierDialog.ShowDialog() == true)
             {
                 String[] results = supplierDialog.Answer.Split(',');

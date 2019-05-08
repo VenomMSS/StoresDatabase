@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using System.Collections;
 
 namespace StoresDatabase
 {
@@ -23,6 +24,26 @@ namespace StoresDatabase
         {
             InitializeComponent();
         }
+
+        // constructor for new loaction
+        public EditLocationDialog(ArrayList withinlocations)
+        { 
+            InitializeComponent();
+            groupFkCombobox.ItemsSource = withinlocations;
+        }
+
+        // constructor for edit loaction
+        public EditLocationDialog(int id, String Name, String loctype, int index, ArrayList withinlocations)
+        {
+            InitializeComponent();
+            iDTBox.Text = id.ToString();
+            nameTBox.Text = Name;
+            typeTBox.Text = loctype;
+            groupFkCombobox.ItemsSource = withinlocations;
+            groupFkCombobox.SelectedIndex = index;
+
+        }
+
 
         public string Answer
         {

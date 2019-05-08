@@ -24,15 +24,17 @@ namespace StoresDatabase
         {
             InitializeComponent();
             // these all need default values for stop crash when answer .get is called
-            iDTBox.Text = "0";
-            nameTBox.Text = "Name";
-            descTBox.Text = "Description";
-            unitTBox.Text = "Unit size";
-            partnoTBox.Text = "PrtNo";
-            amountTBox.Text = "Amnt";
-            priceTBox.Text = "Price";
-            currencyTBox.Text = "Cur";
-            statusTBox.Text = "Sts";
+                      
+        }
+
+        public EditItemDialog(ArrayList locs, ArrayList types, ArrayList sups)
+        {
+            // This constructor is called to add a new item. 
+            // only lists lassed in passed in
+            InitializeComponent();
+            locComboBox.ItemsSource = locs;
+            typeComboBox.ItemsSource = types;
+            supplierComboBox.ItemsSource = sups;
             
         }
 
@@ -60,27 +62,7 @@ namespace StoresDatabase
             supplierComboBox.SelectedIndex = sFK;
         }
 
-        public EditItemDialog(ArrayList locs, ArrayList types, ArrayList sups)
-        {
-            // this constructor called when a new items is being added
-            // Passes in the location,type ansd supplier lists 
-
-            InitializeComponent();
-            // these all need default values for stop crash when answer .get is called
-            iDTBox.Text = "#";
-            nameTBox.Text = "Name";
-            descTBox.Text = "Description";
-            unitTBox.Text = "Unit size";
-            partnoTBox.Text = "PrtNo";
-            amountTBox.Text = "Amnt";
-            priceTBox.Text = "Price";
-            currencyTBox.Text = "Cur";
-            statusTBox.Text = "unknown";
-            locComboBox.ItemsSource = locs;
-            typeComboBox.ItemsSource = types;
-            supplierComboBox.ItemsSource = sups;
-        }
-
+        
 
         public string Answer
         {

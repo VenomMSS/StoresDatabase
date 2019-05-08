@@ -17,11 +17,11 @@
         <Button x:Name="newItem_Btn" Content="New Item" HorizontalAlignment="Left" Margin="53,551,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-1.133,0.6" Click="newItem_Btn_Click"/>
         <Button x:Name="editItem_Btn" Content="Edit item" HorizontalAlignment="Left" Margin="53,591,0,0" VerticalAlignment="Top" Width="75" Height="20" Click="editItem_Btn_Click"/>
         <Button x:Name="newLocation_Btn" Content="New Location" HorizontalAlignment="Left" Margin="224,551,0,0" VerticalAlignment="Top" Width="75" Click="newLocation_Btn_Click"/>
-        <Button x:Name="editLocation_Btn" Content="Edit Location" HorizontalAlignment="Left" Margin="224,591,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="editLocation_Btn" Content="Edit Location" HorizontalAlignment="Left" Margin="224,591,0,0" VerticalAlignment="Top" Width="75" DragOver="editLocation_Btn_DragOver" Click="editLocation_Btn_Click"/>
         <Button x:Name="newType_Btn" Content="New Type" HorizontalAlignment="Left" Margin="400,551,0,0" VerticalAlignment="Top" Width="75" Click="newType_Btn_Click"/>
-        <Button x:Name="editType_Btn" Content="Edit Type" HorizontalAlignment="Left" Margin="400,591,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="editType_Btn" Content="Edit Type" HorizontalAlignment="Left" Margin="400,591,0,0" VerticalAlignment="Top" Width="75" Click="editType_Btn_Click"/>
         <Button x:Name="newSupplier_Btn" Content="New Supplier" HorizontalAlignment="Left" Margin="558,551,0,0" VerticalAlignment="Top" Width="75" Click="newSupplier_Btn_Click"/>
-        <Button x:Name="editSupplier_Btn" Content="edit Supplier" HorizontalAlignment="Left" Margin="558,591,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button x:Name="editSupplier_Btn" Content="edit Supplier" HorizontalAlignment="Left" Margin="558,591,0,0" VerticalAlignment="Top" Width="75" Click="editSupplier_Btn_Click"/>
 
     </Grid>
 </Window>

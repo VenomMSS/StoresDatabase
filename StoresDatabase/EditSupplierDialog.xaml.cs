@@ -19,9 +19,23 @@ namespace StoresDatabase
     /// </summary>
     public partial class EditSupplierDialog : Window
     {
+        // default can be used for new supplier as nothing to pass in 
         public EditSupplierDialog()
         {
             InitializeComponent();
+        }
+
+        // constructor for use for edit supplier
+        public EditSupplierDialog(int ID, String Name, String address, String Web, String email, String Phone)
+        {
+            InitializeComponent();
+            iDTBox.Text = ID.ToString();
+            nameTBox.Text = Name;
+            addressTBox.Text = address;
+            websiteTBox.Text = Web;
+            emailTBox.Text = email;
+            telphoneTBox.Text = Phone;
+
         }
 
         public string Answer
