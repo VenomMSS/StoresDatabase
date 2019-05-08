@@ -84,6 +84,7 @@ namespace StoresDatabase
         public MainWindow()
         {
             InitializeComponent();
+            // these ArrayLists  are for testing only
             places = new ArrayList();
             places.Add("Box1"); places.Add("Box2"); places.Add("Box3");
             suppliers = new ArrayList();
@@ -98,6 +99,55 @@ namespace StoresDatabase
            
 
             CreateAllTables();
+        }
+
+
+        private void NewDBase_Click(object sender, RoutedEventArgs e)
+        {
+            // create a new data base
+            // need a dialog to get the database file name
+            // or just use a save as dialog?
+            DBFileNameDialog getDBName = new DBFileNameDialog();
+            if (getDBName.ShowDialog() == true)
+            {
+                Paragraph para = new Paragraph();
+                para.Inlines.Add(getDBName.Answer + '\n');
+                ViewDoc.Blocks.Add(para);
+            }
+
+            // need to construct connection and then 
+            Connection = "Data Source =c:\\Databases\\"+ getDBName.Answer+ ".db;Version=3;New=True;Compress=True;";
+            database = new SQLiteConnection(Connection);
+            database.Open();
+
+            CreateAllTables();
+        }
+
+        private void OpenDBase_Click(object sender, RoutedEventArgs e)
+        {
+            // the open file dialog to get the name of the database
+            openFileDlg = new OpenFileDialog();
+            openFileDlg.FileOk += openDataBaseFile;
+            openFileDlg.Title = "Open DataBase";
+            openFileDlg.Filter = "db Files(*.db)|*.db|All Files(*.*)|*.*";
+            openFileDlg.ShowDialog();
+        }
+
+        private void openDataBaseFile(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string fullPathname = openFileDlg.FileName;
+            FileInfo src = new FileInfo(fullPathname);
+            Paragraph para = new Paragraph();
+            //para.Inlines.Add(src.DirectoryName + '\n');
+            //para.Inlines.Add(src.FullName + '\n');
+            para.Inlines.Add(src.Name + '\n');
+            ViewDoc.Blocks.Add(para);
+            Connection = "Data Source =c:\\Databases\\" + src.Name + ";Version=3;New=True;Compress=True;";
+            database = new SQLiteConnection(Connection);
+            database.Open();
+
+            CreateAllTables();
+
         }
 
         private void FileOpen_Btn_Click(object sender, RoutedEventArgs e)
@@ -387,6 +437,7 @@ namespace StoresDatabase
             }
         }
 
+       
 
         private void editType_Btn_Click(object sender, RoutedEventArgs e)
         {
@@ -411,6 +462,7 @@ namespace StoresDatabase
             }
         }
 
+        
 
         private void newSupplier_Btn_Click(object sender, RoutedEventArgs e)
         {
@@ -452,6 +504,11 @@ namespace StoresDatabase
                 para.Inlines.Add(" " + '\n' + '\r');
                 ViewDoc.Blocks.Add(para);
             }
+        }
+
+        private void CloseDB_click(object sender, RoutedEventArgs e)
+        {
+            database.Close();
         }
 
 

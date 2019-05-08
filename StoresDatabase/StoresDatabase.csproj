@@ -82,6 +82,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="DBFileNameDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="EditItemDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -105,6 +109,9 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="DBFileNameDialog.xaml.cs">
+      <DependentUpon>DBFileNameDialog.xaml</DependentUpon>
     </Compile>
     <Compile Include="EditItemDialog.xaml.cs">
       <DependentUpon>EditItemDialog.xaml</DependentUpon>
