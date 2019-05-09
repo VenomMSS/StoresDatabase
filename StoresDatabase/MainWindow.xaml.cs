@@ -17,6 +17,7 @@ using System.Windows.Shapes;
 using System.Data.SQLite;
 using System.Collections;
 using StockDBClasses;
+using System.Data;
 
 
 namespace StoresDatabase
@@ -93,12 +94,13 @@ namespace StoresDatabase
             itemtype.Add("Part m/c"); itemtype.Add("Tool"); itemtype.Add("Tool consumable");
 
             // version number in connection string  is the SQLite version and needs to be set to 3.
-            Connection = "Data Source =c:\\Databases\\Stock.db;Version=3;New=True;Compress=True;";
-            database = new SQLiteConnection(Connection);
-            database.Open();
+            // Connection = "Data Source =c:\\Databases\\Stock.db;Version=3;New=True;Compress=True;";
+           ///  database = new SQLiteConnection(Connection);
+            //database.Open();
            
 
-            CreateAllTables();
+           //  CreateAllTables();
+           // changed to only open/create database when user clicks appropriate menu item
         }
 
 
@@ -147,6 +149,8 @@ namespace StoresDatabase
             database.Open();
 
             CreateAllTables();
+            // load data from all tables 
+
 
         }
 
@@ -264,6 +268,8 @@ namespace StoresDatabase
                 " (typeID integer primary key, " + field_parttype + " TEXT, " +
                   field_typeGroupFK + " INTEGER);";
             Cmd.ExecuteNonQuery();
+
+            // need to add order table
         }
 
         
@@ -283,11 +289,59 @@ namespace StoresDatabase
             Cmd.ExecuteNonQuery();
 
             Cmd.CommandText = "DROP TABLE " + table_parttype;
-            Cmd.ExecuteNonQuery();           
+            Cmd.ExecuteNonQuery();  
+            
+            // need to add order table         
         
         }
 
-       
+        public DataTable LoadLocationsFromDB()
+        {
+            DataTable found = new DataTable("Locations");
+            
+            String cmd_String;
+            SQLiteCommand sqlCmd;
+            sqlCmd = database.CreateCommand();
+            cmd_String = "SELECT * FROM " + table_location;
+            sqlCmd.CommandText = cmd_String;
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sqlCmd);
+            adapter.Fill(found);
+            return found;
+
+        }
+
+        public int findLocation(String lookingfor)
+        {
+            int found =-1;
+            DataTable dt_found = new DataTable("Locations");
+
+            String cmd_String, foundrow;
+            SQLiteCommand sqlCmd;
+            foundrow = null;
+            sqlCmd = database.CreateCommand();
+            cmd_String = "SELECT * FROM " + table_location + " WHERE " + field_locName 
+                + " = '" + lookingfor + "'; "; 
+            sqlCmd.CommandText = cmd_String;
+            SQLiteDataReader datareader = sqlCmd.ExecuteReader();
+            if (datareader.HasRows)
+            {
+                // record found for this compnumber
+                while (datareader.Read())
+                {
+                    foundrow = datareader["locID"].ToString();
+                    found = Int32.Parse(foundrow);
+                }
+            }
+
+            return found;
+        }
+
+        private void clearBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // clear data from the datbase
+            DropAllTables();
+            CreateAllTables();
+        }
 
         private void newItem_Btn_Click(object sender, RoutedEventArgs e)
         {
@@ -345,6 +399,19 @@ namespace StoresDatabase
         
         private void newLocation_Btn_Click(object sender, RoutedEventArgs e)
         {
+            DataTable dt_location;
+            places.Clear(); // reread from the database in case anything added
+            dt_location = LoadLocationsFromDB();
+            if (dt_location.Rows.Count !=0)
+            {
+                DataRow r;
+                for (int i = 0; i < dt_location.Rows.Count; i++)
+                {
+                    r = dt_location.Rows[i];
+                    places.Add(r[1].ToString()); // [1] item is locationname
+                }
+            }
+            
             EditLocationDialog locationDialog = new EditLocationDialog(places);
             if (locationDialog.ShowDialog() == true)
             {
@@ -358,6 +425,42 @@ namespace StoresDatabase
                 }
                 para.Inlines.Add(" " + '\n' + '\r');
                 ViewDoc.Blocks.Add(para);
+                // add this to the database
+                SQLiteCommand sqlCmd = new SQLiteCommand(database);
+                String cmd_String;
+                // if there is no selection of location group ( i.e. ==-1)
+                if (Int32.Parse(results[3]) == -1)
+                {
+                    cmd_String = "INSERT INTO " + table_location + " (" + field_locName + ", " +
+                         field_locType + ") VALUES ('" + results[1] + "', '" + results[2] + "' );";
+                    para = new Paragraph();
+                    para.Inlines.Add( cmd_String + '\n' + '\r');
+                    ViewDoc.Blocks.Add(para);
+                    sqlCmd.CommandText = cmd_String;
+                    sqlCmd.ExecuteNonQuery();
+                }
+                else
+                {
+                    // find the record number of the group location
+                    String grouplocationName = (String) places[Int32.Parse(results[3])];
+                    para = new Paragraph();
+                    para.Inlines.Add(grouplocationName + '\n' + '\r');
+                    ViewDoc.Blocks.Add(para);
+
+                    int index = findLocation(grouplocationName);
+                    para = new Paragraph();
+                    para.Inlines.Add("index =  "+ index + '\n' + '\r');
+                    ViewDoc.Blocks.Add(para);
+
+                    cmd_String = "INSERT INTO " + table_location + " (" + field_locName + ", " +
+                         field_locType + ", " + field_InLocationFK  +") VALUES ('" + 
+                         results[1] + "', '" + results[2] + "', '" + index + "' );";
+                    para = new Paragraph();
+                    para.Inlines.Add(cmd_String + '\n' + '\r');
+                    ViewDoc.Blocks.Add(para);
+                    sqlCmd.CommandText = cmd_String;
+                    sqlCmd.ExecuteNonQuery();
+                }
 
             }
         }
@@ -462,7 +565,7 @@ namespace StoresDatabase
             }
         }
 
-        
+       
 
         private void newSupplier_Btn_Click(object sender, RoutedEventArgs e)
         {
@@ -506,17 +609,29 @@ namespace StoresDatabase
             }
         }
 
+        private void enableBtnMenu()
+        {
+            // enable all buttons when a live connection is present
+        }
+
+        private void disbleBtnMenu()
+        {
+            // disable all buttons when a live connection is no present
+        }
+
         private void CloseDB_click(object sender, RoutedEventArgs e)
         {
             database.Close();
         }
 
 
-        private void Exit_btn_Click(object sender, RoutedEventArgs e)
+        private void  Exit_btn_Click(object sender, RoutedEventArgs e)
         {
             database.Close();
             this.Close();
         }
+
+        
 
 
     }

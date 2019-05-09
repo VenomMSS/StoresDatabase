@@ -49,7 +49,7 @@ namespace StoresDatabase
         {
             get
             {
-                return iDTBox.Text +"," + nameTBox.Text +"," + typeTBox +","+ groupFkCombobox.SelectedIndex.ToString() ;
+                return iDTBox.Text +"," + nameTBox.Text +"," + typeTBox.Text +","+ groupFkCombobox.SelectedIndex.ToString() ;
             }
         }
 

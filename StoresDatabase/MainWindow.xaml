@@ -27,6 +27,8 @@
                 <MenuItem Header="_New" IsCheckable="true" Click="NewDBase_Click" />
                 <MenuItem Header="_Open" IsCheckable="true" Click="OpenDBase_Click" />
                 <MenuItem Header="_Close" IsCheckable="true" Click="CloseDB_click" />
+                <Separator />
+                <MenuItem Header="_Exit" Click="Exit_btn_Click" />
             </MenuItem>
             <MenuItem Name="Location" Header="_Locations">
                 <MenuItem Header="_Import" IsCheckable="true" />
@@ -41,6 +43,7 @@
                 <MenuItem Header="_List" IsCheckable="true" />
             </MenuItem>
         </Menu>
+        <Button x:Name="clearBtn" Content="ClearDB" HorizontalAlignment="Left" Height="42" Margin="790,551,0,0" VerticalAlignment="Top" Width="76" Background="#FFFD1212" Click="clearBtn_Click"/>
 
 
     </Grid>
