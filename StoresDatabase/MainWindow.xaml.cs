@@ -436,7 +436,44 @@ namespace StoresDatabase
         }
 
         private void newItem_Btn_Click(object sender, RoutedEventArgs e)
-        {
+        { 
+            DataTable dt_locations, dt_types, dt_suppliers;
+            places.Clear();
+            itemtype.Clear();
+            suppliers.Clear();
+            dt_locations = LoadLocationsFromDB();
+            dt_types = LoadPartTypesFromDB();
+            dt_suppliers = LoadSuppliersFromDB();
+            if (dt_locations.Rows.Count != 0)
+            {
+                DataRow location_row;
+                for (int i = 0; i < dt_locations.Rows.Count; i++)
+                {
+                    location_row = dt_locations.Rows[i];
+                    places.Add(location_row[1]);
+                }
+            }
+            if (dt_types.Rows.Count != 0)
+            {
+                DataRow type_row;
+                for (int i = 0; i < dt_types.Rows.Count; i++)
+                {
+                    type_row = dt_types.Rows[i];
+                    itemtype.Add(type_row[1]);
+                }
+            }
+
+            if (dt_suppliers.Rows.Count != 0)
+            {
+                DataRow supplier_row;
+                for (int i = 0; i < dt_suppliers.Rows.Count; i++)
+                {
+                    supplier_row = dt_suppliers.Rows[i];
+                    suppliers.Add(supplier_row[1]);
+                }
+            }
+
+
             EditItemDialog itemDialog = new EditItemDialog(places, itemtype, suppliers);
             if (itemDialog.ShowDialog() == true)
             {
@@ -449,6 +486,166 @@ namespace StoresDatabase
                     para.Inlines.Add(s + '\n');
                 }
                 para.Inlines.Add(" "+ '\n' + '\r');
+                ViewDoc.Blocks.Add(para);
+                SQLiteCommand sqlCmd = new SQLiteCommand(database);
+                String cmd_String;
+                int amount, loc_select, type_select, sup_select, loc_index, type_index, supplier_index;
+                // check stocke entered and set status to "Instock if >0
+                results[8] = "OOS";
+                amount = Int32.Parse("0"+results[5]);
+                if (amount > 0)
+                {
+                    results[8] = "In Stock";
+                }
+                
+                loc_select = Int32.Parse(results[9]);
+                type_select = Int32.Parse(results[10]);
+                sup_select = Int32.Parse(results[11]);
+                loc_index = -1; type_index = -1; supplier_index = -1;
+
+                if (loc_select != -1)
+                {
+                    // location was selected
+                    loc_index = findLocation((String)places[loc_select]);
+                    para.Inlines.Add("Location " + places[loc_select] + '\n' + '\r');
+                }
+
+                if (type_select != -1)
+                {
+                    // type was selected
+                    type_index = findType((String)itemtype[type_select]);
+                    para.Inlines.Add(" type " + itemtype[type_select] + '\n' + '\r');
+                }
+
+                if (sup_select != -1)
+                {
+                    // supplier was selected
+                    supplier_index = findSupplier((String)suppliers[sup_select]);
+                    para.Inlines.Add(" supplier " + suppliers[sup_select] + '\n' + '\r');
+                }
+                               
+                ViewDoc.Blocks.Add(para);
+                // CREATE THE SQLITE COMMAND STRING
+                // Firstly the common part of the string.
+                cmd_String = "INSERT INTO " + table_parts + " (" + field_partName + ", " +
+                                field_PartDescription + ", " + field_partUnit + ", " + field_SupplierPartNo + ", " +
+                                field_stock + ", " + field_price + ", " + field_currency + ", " + field_status;
+               
+                // then add additional fields for each possible return value 
+                // based on which selections made in Combiboxes
+
+                if (loc_index != -1)
+                {
+                    // there is a location selected
+                    if (type_index != -1)
+                    {
+                        // there is a type selected ( and a location selected)
+                        if (supplier_index != -1)
+                        {
+                            // theres is supplier selected ( and type and location)
+                            cmd_String = cmd_String + ", " + field_InLocationFK +", " + field_partTypeFK +", " + field_SuppFK + ") VALUES ('" +
+                                results[1] + "', '" + results[2] + "', '" + results[3] + "', '" + results[4] + "', '" +
+                                results[5] + "', '" + results[6] + "', '" + results[7] + "', '" + results[8] + "', '" +
+                                loc_index + "', '" + type_index + "', '" + supplier_index + "' );";
+                            sqlCmd.CommandText = cmd_String;
+                            sqlCmd.ExecuteNonQuery();
+                            para.Inlines.Add("Location, type & Supplier selected" + '\n' + '\r');
+                        }
+                        else
+                        {
+                            // theres is no supplier selected ( but there is type and location)
+                            cmd_String = cmd_String + ", " + field_InLocationFK + ", " + field_partTypeFK + ") VALUES ('" +
+                                results[1] + "', '" + results[2] + "', '" + results[3] + "', '" + results[4] + "', '" +
+                                results[5] + "', '" + results[6] + "', '" + results[7] + "', '" + results[8] + "', '" +
+                                loc_index + "', '" + type_index +  "' );";
+                            sqlCmd.CommandText = cmd_String;
+                            sqlCmd.ExecuteNonQuery();
+                            para.Inlines.Add("Location & type selected NO supplier" + '\n' + '\r');
+                        }
+                    }
+                    else
+                    {
+                        // there is no type selected ( but is locacation slected)
+                        if (supplier_index != -1)
+                        {
+                            // theres is supplier selected ( no  type but is location)
+                            cmd_String = cmd_String + ", " + field_InLocationFK + ", "  + field_SuppFK + ") VALUES ('" +
+                                results[1] + "', '" + results[2] + "', '" + results[3] + "', '" + results[4] + "', '" +
+                                results[5] + "', '" + results[6] + "', '" + results[7] + "', '" + results[8] + "', '" +
+                                loc_index + "', '"  + supplier_index + "' );";
+                            sqlCmd.CommandText = cmd_String;
+                            sqlCmd.ExecuteNonQuery();
+                            para.Inlines.Add("Location & Supplier selected NO Type" + '\n' + '\r');
+                        }
+                        else
+                        {
+                            // theres is no supplier selected ( and no type but there is location)
+                            cmd_String = cmd_String + ", " + field_InLocationFK +  ") VALUES ('" +
+                                results[1] + "', '" + results[2] + "', '" + results[3] + "', '" + results[4] + "', '" +
+                                results[5] + "', '" + results[6] + "', '" + results[7] + "', '" + results[8] + "', '" +
+                                loc_index +  "' );";
+                            sqlCmd.CommandText = cmd_String;
+                            sqlCmd.ExecuteNonQuery();
+                            para.Inlines.Add("Location selected but NO type and NO supplier" + '\n' + '\r');
+                        }
+                    }
+                }
+                else
+                {
+                    // there is no locaation selected
+                    if (type_index != -1)
+                    {
+                        // there is a type selected ( but no  location selected)
+                        if (supplier_index != -1)
+                        {
+                            // theres is supplier selected ( and type but no  location)
+                            cmd_String = cmd_String + ", "  + field_partTypeFK + ", " + field_SuppFK + ") VALUES ('" +
+                                results[1] + "', '" + results[2] + "', '" + results[3] + "', '" + results[4] + "', '" +
+                                results[5] + "', '" + results[6] + "', '" + results[7] + "', '" + results[8] + "', '" +
+                                + type_index + "', '" + supplier_index + "' );";
+                            sqlCmd.CommandText = cmd_String;
+                            sqlCmd.ExecuteNonQuery();
+                            para.Inlines.Add("Type & Supplier selected NO Location" + '\n' + '\r');
+                        }
+                        else
+                        {
+                            // theres is no supplier selected ( but there is type but no  location)
+                            cmd_String = cmd_String + ", " +  field_partTypeFK +  ") VALUES ('" +
+                                results[1] + "', '" + results[2] + "', '" + results[3] + "', '" + results[4] + "', '" +
+                                results[5] + "', '" + results[6] + "', '" + results[7] + "', '" + results[8] + "', '" +
+                                + type_index +  "' );";
+                            sqlCmd.CommandText = cmd_String;
+                            sqlCmd.ExecuteNonQuery();
+                            para.Inlines.Add("Type selected but No Location & NO supplier" + '\n' + '\r');
+                        }
+                    }
+                    else
+                    {
+                        // there is no type selected ( and no locacation slected)
+                        if (supplier_index != -1)
+                        {
+                            // theres is supplier selected ( but no  type but no  location)
+                            cmd_String = cmd_String + ", "  + field_SuppFK + ") VALUES ('" +
+                                results[1] + "', '" + results[2] + "', '" + results[3] + "', '" + results[4] + "', '" +
+                                results[5] + "', '" + results[6] + "', '" + results[7] + "', '" + results[8] + "', '" +
+                                supplier_index + "' );";
+                            sqlCmd.CommandText = cmd_String;
+                            sqlCmd.ExecuteNonQuery();
+                            para.Inlines.Add("Supplier selected but NO Location & NO Type" + '\n' + '\r');
+                        }
+                        else
+                        {
+                            // theres is no supplier selected ( and no type or  location)
+                            cmd_String = cmd_String + ") VALUES ('" + results[1] + "', '" + results[2] + "', '" + results[3] +
+                                "', '" + results[4] + "', '" +  results[5] + "', '" + results[6] + "', '" + results[7] +
+                                "', '" + results[8] +  "' );";
+                            sqlCmd.CommandText = cmd_String;
+                            sqlCmd.ExecuteNonQuery();
+                            para.Inlines.Add("NO Location NO Type No Supplier" + '\n' + '\r');
+                        }
+                    }
+                }
+
                 ViewDoc.Blocks.Add(para);
             }
         }
