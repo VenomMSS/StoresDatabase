@@ -42,8 +42,8 @@ namespace StoresDatabase
         {
             get
             {
-                return iDTBox.Text + "," + nameTBox.Text + "," + 
-                    addressTBox.Text+ "," + websiteTBox.Text +"," + emailTBox.Text +"," +
+                return iDTBox.Text + ";" + nameTBox.Text + ";" + 
+                    addressTBox.Text+ ";" + websiteTBox.Text +";" + emailTBox.Text +";" +
                     telphoneTBox.Text;
             }
         }

@@ -95,9 +95,10 @@ namespace StoresDatabase
 
             // version number in connection string  is the SQLite version and needs to be set to 3.
             // Connection = "Data Source =c:\\Databases\\Stock.db;Version=3;New=True;Compress=True;";
-           ///  database = new SQLiteConnection(Connection);
+            ///  database = new SQLiteConnection(Connection);
             //database.Open();
-           
+
+            disbleBtnMenu();
 
            //  CreateAllTables();
            // changed to only open/create database when user clicks appropriate menu item
@@ -123,6 +124,7 @@ namespace StoresDatabase
             database.Open();
 
             CreateAllTables();
+            enableBtnMenu();
         }
 
         private void OpenDBase_Click(object sender, RoutedEventArgs e)
@@ -150,7 +152,7 @@ namespace StoresDatabase
 
             CreateAllTables();
             // load data from all tables 
-
+            enableBtnMenu();
 
         }
 
@@ -259,7 +261,7 @@ namespace StoresDatabase
             // create the supplier table
             Cmd.CommandText = "CREATE TABLE IF NOT EXISTS " + table_supplier +
                 " (supID integer primary key, " + field_SupName + " TEXT, " +
-                  field_SupAddress + " TEXT, " + field_Supwebsite + " TEXT" +
+                  field_SupAddress + " TEXT, " + field_Supwebsite + " TEXT," +
                   field_Supemail + " TEXT, " +  field_SupTel + " TEXT);";
             Cmd.ExecuteNonQuery();
 
@@ -417,6 +419,20 @@ namespace StoresDatabase
             // clear data from the datbase
             DropAllTables();
             CreateAllTables();
+
+           // fix error in Supplier table
+            //SQLiteCommand sqlCmd;
+            //sqlCmd = database.CreateCommand();
+            //String cmdString;
+            //sqlCmd.CommandText = "DROP TABLE " + table_supplier;
+            //sqlCmd.ExecuteNonQuery();
+
+            //sqlCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + table_supplier +
+            //    " (supID integer primary key, " + field_SupName + " TEXT, " +
+            //      field_SupAddress + " TEXT, " + field_Supwebsite + " TEXT," +
+            //      field_Supemail + " TEXT, " + field_SupTel + " TEXT);";
+            //sqlCmd.ExecuteNonQuery();
+
         }
 
         private void newItem_Btn_Click(object sender, RoutedEventArgs e)
@@ -710,7 +726,7 @@ namespace StoresDatabase
             EditSupplierDialog supplierDialog = new EditSupplierDialog();
             if (supplierDialog.ShowDialog() == true)
             {
-                String[] results = supplierDialog.Answer.Split(',');
+                String[] results = supplierDialog.Answer.Split(';');
                 Paragraph para = new Paragraph();
                 para.Inlines.Add(supplierDialog.Answer + '\n' + '\r');
                 foreach (String s in results)
@@ -764,11 +780,31 @@ namespace StoresDatabase
         private void enableBtnMenu()
         {
             // enable all buttons when a live connection is present
+            newItem_Btn.IsEnabled = true;
+            editItem_Btn.IsEnabled = true;
+            newLocation_Btn.IsEnabled = true;
+            editLocation_Btn.IsEnabled = true;
+            newType_Btn.IsEnabled = true;
+            editType_Btn.IsEnabled = true;
+            newSupplier_Btn.IsEnabled = true;
+            editSupplier_Btn.IsEnabled = true;
+            clearBtn.IsEnabled = true;
+            FileOpen_Btn.IsEnabled = true;
         }
 
         private void disbleBtnMenu()
         {
             // disable all buttons when a live connection is no present
+            newItem_Btn.IsEnabled = false;
+            editItem_Btn.IsEnabled = false;
+            newLocation_Btn.IsEnabled = false;
+            editLocation_Btn.IsEnabled = false;
+            newType_Btn.IsEnabled = false;
+            editType_Btn.IsEnabled = false;
+            newSupplier_Btn.IsEnabled = false;
+            editSupplier_Btn.IsEnabled = false;
+            clearBtn.IsEnabled = false;
+            FileOpen_Btn.IsEnabled = false;
         }
 
         private void CloseDB_click(object sender, RoutedEventArgs e)
