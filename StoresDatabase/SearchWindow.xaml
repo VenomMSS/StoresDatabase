@@ -1,0 +1,23 @@
+﻿<Window x:Class="StoresDatabase.SearchWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:StoresDatabase"
+        mc:Ignorable="d"
+        Title="Search" Height="300" Width="800">
+    <Grid>
+        <TextBox x:Name="searchTBox" HorizontalAlignment="Left" Height="23" Margin="31,26,0,0" TextWrapping="Wrap" Text="Item" VerticalAlignment="Top" Width="84"/>
+        <Button x:Name="search_Btn" Content="Find" HorizontalAlignment="Left" Height="19" Margin="31,63,0,0" VerticalAlignment="Top" Width="56" Click="search_Btn_Click"/>
+        <ComboBox x:Name="locationComboBox" HorizontalAlignment="Left" Height="20" Margin="31,130,0,0" VerticalAlignment="Top" Width="84"/>
+        <ComboBox x:Name="typeComboBox" HorizontalAlignment="Left" Height="20" Margin="31,166,0,0" VerticalAlignment="Top" Width="84" RenderTransformOrigin="0.29,0.613"/>
+        <ComboBox x:Name="supplierComboBox" HorizontalAlignment="Left" Height="20" Margin="31,203,0,0" VerticalAlignment="Top" Width="84" RenderTransformOrigin="1.583,0.599"/>
+        <Button x:Name="locationSelectBtn" Content="Location" HorizontalAlignment="Left" Margin="136,130,0,0" VerticalAlignment="Top" Width="75" Click="locationSelectBtn_Click"/>
+        <Button x:Name="typeSelectBtn" Content="Type" HorizontalAlignment="Left" Margin="136,166,0,0" VerticalAlignment="Top" Width="75" Click="typeSelectBtn_Click"/>
+        <Button x:Name="supplierSelect_Btn" Content="Supplier" HorizontalAlignment="Left" Margin="136,203,0,0" VerticalAlignment="Top" Width="75" Click="supplierSelect_Btn_Click"/>
+        <DataGrid x:Name="itemDataGrid" HorizontalAlignment="Left" Height="136" Margin="349,38,0,0" VerticalAlignment="Top" Width="385"/>
+        <Button x:Name="close_Btn" Content="Close" HorizontalAlignment="Left" Height="20" Margin="661,223,0,0" VerticalAlignment="Top" Width="73" Click="close_Btn_Click"/>
+        <Button x:Name="all_Btn" Content="Show All" HorizontalAlignment="Left" Height="24" Margin="349,186,0,0" VerticalAlignment="Top" Width="97" Click="all_Btn_Click"/>
+
+    </Grid>
+</Window>
