@@ -974,6 +974,12 @@ namespace StoresDatabase
             }
         }
 
+        private void search_Btn_Click(object sender, RoutedEventArgs e)
+        {
+            SearchWindow searchWindow = new SearchWindow(database);
+            searchWindow.Show();
+        }
+
         private void enableBtnMenu()
         {
             // enable all buttons when a live connection is present
@@ -987,6 +993,7 @@ namespace StoresDatabase
             editSupplier_Btn.IsEnabled = true;
             clearBtn.IsEnabled = true;
             FileOpen_Btn.IsEnabled = true;
+            search_Btn.IsEnabled = true;
         }
 
         private void disbleBtnMenu()
@@ -1002,6 +1009,7 @@ namespace StoresDatabase
             editSupplier_Btn.IsEnabled = false;
             clearBtn.IsEnabled = false;
             FileOpen_Btn.IsEnabled = false;
+            search_Btn.IsEnabled = false;
         }
 
         private void CloseDB_click(object sender, RoutedEventArgs e)

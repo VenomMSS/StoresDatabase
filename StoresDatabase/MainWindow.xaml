@@ -13,7 +13,7 @@
         <FlowDocumentReader Name ="DocReader" Margin="329,46,114,178"  >
             <FlowDocument Name="ViewDoc" ></FlowDocument>
         </FlowDocumentReader>
-        <Button x:Name="Exit_btn" Content="Exit" HorizontalAlignment="Left" Margin="993,591,0,0" VerticalAlignment="Top" Width="75" Click="Exit_btn_Click"/>
+        <Button x:Name="Exit_btn" Content="Exit" HorizontalAlignment="Left" Margin="1019,621,0,0" VerticalAlignment="Top" Width="75" Click="Exit_btn_Click"/>
         <Button x:Name="newItem_Btn" Content="New Item" HorizontalAlignment="Left" Margin="53,551,0,0" VerticalAlignment="Top" Width="75" RenderTransformOrigin="-1.133,0.6" Click="newItem_Btn_Click"/>
         <Button x:Name="editItem_Btn" Content="Edit item" HorizontalAlignment="Left" Margin="53,591,0,0" VerticalAlignment="Top" Width="75" Height="20" Click="editItem_Btn_Click"/>
         <Button x:Name="newLocation_Btn" Content="New Location" HorizontalAlignment="Left" Margin="224,551,0,0" VerticalAlignment="Top" Width="75" Click="newLocation_Btn_Click"/>
@@ -43,7 +43,8 @@
                 <MenuItem Header="_List" IsCheckable="true" />
             </MenuItem>
         </Menu>
-        <Button x:Name="clearBtn" Content="ClearDB" HorizontalAlignment="Left" Height="42" Margin="790,551,0,0" VerticalAlignment="Top" Width="76" Background="#FFFD1212" Click="clearBtn_Click"/>
+        <Button x:Name="clearBtn" Content="ClearDB" HorizontalAlignment="Left" Height="42" Margin="1018,529,0,0" VerticalAlignment="Top" Width="76" Background="#FFFD1212" Click="clearBtn_Click"/>
+        <Button x:Name="search_Btn" Content="Search" HorizontalAlignment="Left" Height="20" Margin="756,551,0,0" VerticalAlignment="Top" Width="106" Click="search_Btn_Click"/>
 
 
     </Grid>
