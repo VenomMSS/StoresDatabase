@@ -161,7 +161,7 @@ namespace StoresDatabase
             // OPen a file and read the contents
             // Firstly need a Openfile dialog
             openFileDlg = new OpenFileDialog();
-            openFileDlg.FileOk += openCSVFile;
+            openFileDlg.FileOk += openToDBFile;
             openFileDlg.Title = "Open File";
             openFileDlg.Filter = "CSV Files(*.csv)|*.csv|Text file(*.txt)|*.txt|All Files(*.*)|*.*";
 
@@ -233,7 +233,56 @@ namespace StoresDatabase
 
         }
 
-        
+        private void openToDBFile(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string fullPathname = openFileDlg.FileName;
+            Paragraph para;
+            FileInfo src = new FileInfo(fullPathname);
+
+            string line;
+            TextReader reader = src.OpenText();
+            SQLiteCommand sql_cmd = database.CreateCommand();
+            String sql_string;
+            int loc_index, type_index, sup_index;
+            line = reader.ReadLine();
+            while (line != null)
+            {
+                // add to the database
+                string[] fields = line.Split(',');
+                loc_index = findLocation(fields[7]);
+                type_index = findType(fields[8]);
+                sup_index = findSupplier(fields[9]);
+                sql_string = "INSERT INTO " + table_parts + " (" + field_partName + ", " +
+                                field_PartDescription + ", " + field_partUnit + ", " + field_SupplierPartNo + ", " +
+                                field_stock + ", " + field_price + ", " + field_currency + ", " +  field_LocFK + ", " + 
+                                field_partTypeFK + ", " + field_SuppFK + ", " +  field_status + ") VALUES ('";
+                sql_string = sql_string + fields[0] + "', '" + fields[1] + "', '" + fields[2] + "', '" + fields[3] + "', '" + 
+                    fields[4] + "', '" + fields[5] + "', '" + fields[6] + "', '" + loc_index + "', '" + type_index +
+                    "', '" +  sup_index + "', '" + fields[10] + "' );";
+                sql_cmd.CommandText = sql_string;
+                sql_cmd.ExecuteNonQuery();
+
+                // write to the Flowdocument 
+                para = new Paragraph();
+                para.Inlines.Add(line + '\n' + '\r');
+                int n = 0;
+                foreach (string f in fields)
+                {
+                    para.Inlines.Add(" field# " + n + " = " + f + '\n');
+                    n++;
+                }
+                para.Inlines.Add(" " + '\n' + '\r');
+                ViewDoc.Blocks.Add(para);
+                
+                
+                
+                // read next line
+                line = reader.ReadLine();
+
+            }
+            reader.Close();
+
+        }
 
         private void CreateAllTables()
         {
@@ -419,20 +468,6 @@ namespace StoresDatabase
             // clear data from the datbase
             DropAllTables();
             CreateAllTables();
-
-           // fix error in Supplier table
-            //SQLiteCommand sqlCmd;
-            //sqlCmd = database.CreateCommand();
-            //String cmdString;
-            //sqlCmd.CommandText = "DROP TABLE " + table_supplier;
-            //sqlCmd.ExecuteNonQuery();
-
-            //sqlCmd.CommandText = "CREATE TABLE IF NOT EXISTS " + table_supplier +
-            //    " (supID integer primary key, " + field_SupName + " TEXT, " +
-            //      field_SupAddress + " TEXT, " + field_Supwebsite + " TEXT," +
-            //      field_Supemail + " TEXT, " + field_SupTel + " TEXT);";
-            //sqlCmd.ExecuteNonQuery();
-
         }
 
         private void newItem_Btn_Click(object sender, RoutedEventArgs e)
