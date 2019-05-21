@@ -119,16 +119,49 @@ namespace StoresDatabase
             // by adding 1 to the index we get the correct locations in database
             int found = locationComboBox.SelectedIndex + 1;
             if (found > 0)
+            
             {
-                DataTable dt_found = new DataTable();
-                SQLiteCommand sql_cmd = database.CreateCommand();
-                String sql_string;
-                sql_string = "SELECT * FROM Item WHERE LocationFK = '" + found + "'; ";
-                sql_cmd.CommandText = sql_string;
-                SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
-                adapter.Fill(dt_found);
+                DataTable dt_found = retrieveItemsbyLocation(found);
+                //SQLiteCommand sql_cmd = database.CreateCommand();
+                //String sql_string;
+                //sql_string = "SELECT * FROM Item WHERE LocationFK = '" + found + "'; ";
+                //sql_cmd.CommandText = sql_string;
+                //SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
+                //adapter.Fill(dt_found);
                 itemDataGrid.ItemsSource = dt_found.DefaultView;
             }
+        }
+
+        private DataTable retrieveItemsbyLocation(int i)
+        {
+            DataTable cummulative = new DataTable();
+            DataTable dt_retrievelocations = new DataTable();
+            SQLiteCommand sql_cmd = database.CreateCommand();
+            String sql_string;
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
+            sql_string = "SELECT * FROM Item WHERE LocationFK = '" + i + "'; ";
+            sql_cmd.CommandText = sql_string;
+            adapter.Fill(cummulative);
+
+            // need to check for any location which refers back to this location
+            sql_string = "SELECT * FROM Locations WHERE LocationFK = '" + i + "'; ";
+            sql_cmd.CommandText = sql_string;
+            adapter.Fill(dt_retrievelocations);
+            // if there are any locations returned then call this method recursively to get the item records
+            if (dt_retrievelocations.Rows.Count != 0)
+               
+            {
+                DataTable temp = new DataTable();
+                foreach (DataRow r in dt_retrievelocations.Rows)
+                {
+                    temp = retrieveItemsbyLocation(Int32.Parse(r[0].ToString()));
+                    foreach (DataRow dr in temp.Rows)
+                    {
+                        cummulative.ImportRow(dr);
+                    }
+                }
+            }
+            return cummulative;
         }
 
         private void typeSelectBtn_Click(object sender, RoutedEventArgs e)
@@ -139,15 +172,50 @@ namespace StoresDatabase
             int found = typeComboBox.SelectedIndex + 1;
             if (found > 0)
             {
-                DataTable dt_found = new DataTable();
-                SQLiteCommand sql_cmd = database.CreateCommand();
-                String sql_string;
-                sql_string = "SELECT * FROM Item WHERE PartTypeFK = '" + found + "'; ";
-                sql_cmd.CommandText = sql_string;
-                SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
-                adapter.Fill(dt_found);
+                DataTable dt_found = retrieveItemsbyType(found);
+                //SQLiteCommand sql_cmd = database.CreateCommand();
+                //String sql_string;
+                //sql_string = "SELECT * FROM Item WHERE PartTypeFK = '" + found + "'; ";
+                //sql_cmd.CommandText = sql_string;
+                //SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
+                //adapter.Fill(dt_found);
                 itemDataGrid.ItemsSource = dt_found.DefaultView;
             }
+        }
+
+        private DataTable retrieveItemsbyType(int i)
+        {
+            // MessageBox.Show("retrieving from location" + i);
+            DataTable cummulstive = new DataTable();
+            DataTable dt_retrievetypes = new DataTable();
+            SQLiteCommand sql_cmd = database.CreateCommand();
+            String sql_string;
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
+
+            // firstly fill table with records which link to this type
+            sql_string = "SELECT * FROM Item WHERE PartTypeFK = '" + i + "'; ";
+            sql_cmd.CommandText = sql_string;
+            adapter.Fill(cummulstive);
+                        
+            // then get the type records which link to the type record ( if any )
+            sql_string = "SELECT * FROM ItemType WHERE TypeGroup = '" + i + "'; ";
+            sql_cmd.CommandText = sql_string;
+            
+            adapter.Fill(dt_retrievetypes);
+            DataTable temp = new DataTable();
+            // if there are other type records which link to this one then retrieve records from them
+            // i.e. this calls the current methods recursively
+            if (dt_retrievetypes.Rows.Count != 0)
+            {
+                foreach (DataRow r in dt_retrievetypes.Rows)
+                    temp = retrieveItemsbyType(Int32.Parse(r[0].ToString()));
+                foreach (DataRow dr in temp.Rows)
+                {
+                    cummulstive.ImportRow(dr);
+                }
+            }
+            
+            return cummulstive;
         }
 
         private void supplierSelect_Btn_Click(object sender, RoutedEventArgs e)
