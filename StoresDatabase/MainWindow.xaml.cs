@@ -792,14 +792,14 @@ namespace StoresDatabase
         private void editLocation_Btn_DragOver(object sender, DragEventArgs e)
         {
             // crete a location for testing only 
-            location = new Location();
-            location.ID = 31;
-            location.Name = "AJS1";
-            location.Type = "PlasticBox";
-            location.groupFK = 1;
+            //location = new Location();
+            //location.ID = 31;
+            //location.Name = "AJS1";
+            //location.Type = "PlasticBox";
+            //location.groupFK = 1;
 
-            EditLocationDialog locationDialog = new EditLocationDialog(location.ID, location.Name, location.Type, location.groupFK, places);
-
+            // EditLocationDialog locationDialog = new EditLocationDialog(location.ID, location.Name, location.Type, location.groupFK, places);
+            EditLocationDialog locationDialog = new EditLocationDialog(database);
             if (locationDialog.ShowDialog() == true)
             {
                 // read answer string and paste it to the Flow Document
@@ -820,14 +820,14 @@ namespace StoresDatabase
         private void editLocation_Btn_Click(object sender, RoutedEventArgs e)
         {
             // crete a location for testing only 
-            location = new Location();
-            location.ID = 31;
-            location.Name = "AJS1";
-            location.Type = "PlasticBox";
-            location.groupFK = 1;
+            //location = new Location();
+            //location.ID = 31;
+            //location.Name = "AJS1";
+            //location.Type = "PlasticBox";
+            //location.groupFK = 1;
 
-            EditLocationDialog locationDialog = new EditLocationDialog(location.ID, location.Name, location.Type, location.groupFK, places);
-
+            //EditLocationDialog locationDialog = new EditLocationDialog(location.ID, location.Name, location.Type, location.groupFK, places);
+            EditLocationDialog locationDialog = new EditLocationDialog(database);
             if (locationDialog.ShowDialog() == true)
             {
                 // read answer string and paste it to the Flow Document
@@ -1055,8 +1055,8 @@ namespace StoresDatabase
 
         private void  Exit_btn_Click(object sender, RoutedEventArgs e)
         {
-            database.Close();
-            this.Close();
+               database.Close();
+               this.Close();
         }
 
         
