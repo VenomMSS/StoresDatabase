@@ -24,7 +24,7 @@ namespace StoresDatabase
     {
         SQLiteConnection database;
         DataTable  dt_locations;
-        ArrayList places;
+        ArrayList places = new ArrayList();
 
         public EditLocationDialog()
         {
@@ -62,19 +62,20 @@ namespace StoresDatabase
             //groupFkCombobox.ItemsSource = withinlocations;
             //groupFkCombobox.SelectedIndex = index;
             // populate the datagrid with current locations
-            SQLiteCommand sql_cmd = database.CreateCommand();
-            String sql_string;
-            sql_string = "SELECT * FROM Locations";
-            sql_cmd.CommandText = sql_string;
-            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
-            adapter.Fill(dt_locations);
-            locationdataGrid.ItemsSource = dt_locations.DefaultView;
-            places = new ArrayList();
-            foreach (DataRow r in dt_locations.Rows)
-            {
-                places.Add(r[1].ToString());
-            }
-            groupFkCombobox.ItemsSource = places;
+            LoadDatagrid();
+            //SQLiteCommand sql_cmd = database.CreateCommand();
+            //String sql_string;
+            //sql_string = "SELECT * FROM Locations";
+            //sql_cmd.CommandText = sql_string;
+            //SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
+            //adapter.Fill(dt_locations);
+            //locationdataGrid.ItemsSource = dt_locations.DefaultView;
+            //places = new ArrayList();
+            //foreach (DataRow r in dt_locations.Rows)
+            //{
+            //    places.Add(r[1].ToString());
+            //}
+            //groupFkCombobox.ItemsSource = places;
         }
 
 
@@ -88,6 +89,8 @@ namespace StoresDatabase
 
         private void OK_Btn_Click(object sender, RoutedEventArgs e)
         {
+            SQLiteCommand sql_cmd = database.CreateCommand();
+            String sql_string;
             // remove this 
            //  DialogResult = true;
             // change this to process the values in the textboxes
@@ -97,16 +100,46 @@ namespace StoresDatabase
                 // this is a new entry 
                 // add to location table
                 MessageBox.Show("This is a new entry ");
-
+                int groupindex = groupFkCombobox.SelectedIndex + 1;
+                if (groupindex == 0)
+                {
+                    sql_string = "INSERT INTO Locations (Location, Type) VALUES ('"
+                    + nameTBox.Text + "', '" + typeTBox.Text +  "');";
+                }
+                else
+                {
+                    sql_string = "INSERT INTO Locations (Location, Type, LocationFK) VALUES ('"
+                    + nameTBox.Text + "', '" + typeTBox.Text + "', '" + groupindex + "');";
+                }
+                MessageBox.Show(sql_string);
+                sql_cmd.CommandText = sql_string;
+                sql_cmd.ExecuteNonQuery();
+                LoadDatagrid();
+              
             }
             else
             {
                 // this is an update
                 int index = Int32.Parse("0" + iDTBox.Text);
-                if (index > 0)
                 {
                     // update the record at index 
                     MessageBox.Show("This is an update on entry " + index);
+                    int groupindex = groupFkCombobox.SelectedIndex + 1;
+                    if (groupindex == 0)
+                    {
+                        sql_string = "UPDATE IN Locations SET Location, = '" + nameTBox.Text +
+                            "', Type = '" + typeTBox.Text + "' WHERE locID = '" + index + "';";
+                    }
+                    else
+                    {
+                        sql_string = "UPDATE Locations SET Location = '" + nameTBox.Text + "', Type = '" + 
+                            typeTBox.Text+ "', LocationFK = '" + groupindex + "' WHERE locID = '" + index + "';";
+                    }
+                    MessageBox.Show(sql_string);
+                    sql_cmd.CommandText = sql_string;
+                    sql_cmd.ExecuteNonQuery();
+                    LoadDatagrid();
+
                 }
             }
 
@@ -142,21 +175,104 @@ namespace StoresDatabase
 
         private void delete_Btn_Click(object sender, RoutedEventArgs e)
         {
+            SQLiteCommand sql_cmd = database.CreateCommand();
+            String sql_string;
             int index = Int32.Parse("0" + iDTBox.Text);
             if (index > 0)
             {
-                // delete the record at index 
-                iDTBox.Text = String.Empty;
-                nameTBox.Text = String.Empty;
-                typeTBox.Text = String.Empty;
-                groupFkCombobox.SelectedIndex = -1;
-                OK_Btn.Content = "Add New";
-                MessageBox.Show("The record at "  + index+ " will be deleted");
-            }
+                // check if in use
+                if (isUsedByLocations(index))
+                {
+                    MessageBox.Show("You cannot delete a location in use by other locations");
+                }
+                else
+                {
+                    if (isUsedByItems(index))
+                    {
+                        MessageBox.Show("You cannot delete a location in use by items");
+                    }
+                    else
+                    {
+                        // confirm deletion
+                        MessageBoxResult result = MessageBox.Show("Are you sure you want to delete record" + index, "Deletion", MessageBoxButton.YesNoCancel);
+                        if (result == MessageBoxResult.Yes)
+                        {
+                            // delete the record at index 
+                            sql_string = "DELETE FROM Locations WHERE locID = '" + index + "';";
+                            sql_cmd.CommandText = sql_string;
+                            sql_cmd.ExecuteNonQuery();
+                            // reload locations again
+                            LoadDatagrid();
+                            MessageBox.Show("The record at " + index + " has been deleted");
+                            iDTBox.Text = String.Empty;
+                            nameTBox.Text = String.Empty;
+                            typeTBox.Text = String.Empty;
+                            groupFkCombobox.SelectedIndex = -1;
+                            OK_Btn.Content = "Add New";
+                        }
+                    }
+
+                }
+                             
+                
+               }
         }
 
-        
-}
+        private bool isUsedByLocations(int loc)
+        {
+            bool check = false;
+            SQLiteCommand sql_cmd = database.CreateCommand();
+            sql_cmd.CommandText = "SELECT * FROM Locations WHERE LocationFK = '" + loc + "';";
+            SQLiteDataReader reader = sql_cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                check = true;
+            }
+            return check;
+       }
+
+
+        private Boolean isUsedByItems(int loc)
+        {
+            Boolean check = false;
+            SQLiteCommand sql_cmd = database.CreateCommand();
+            sql_cmd.CommandText = "SELECT * FROM Item WHERE LocationFK = '" + loc + "';";
+            SQLiteDataReader reader = sql_cmd.ExecuteReader();
+            if (reader.HasRows)
+            {
+                check = true;
+            }
+            return check;
+        }
+        private void LoadDatagrid()
+        {
+            dt_locations = new DataTable();
+            SQLiteCommand load_cmd = database.CreateCommand();
+            String load_string;
+            load_string = "SELECT * FROM Locations";
+            load_cmd.CommandText = load_string;
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(load_cmd);
+            adapter.Fill(dt_locations);
+            locationdataGrid.ItemsSource = dt_locations.DefaultView;
+            places.Clear();
+            foreach (DataRow r in dt_locations.Rows)
+            {
+                places.Add(r[1].ToString());
+            }
+            groupFkCombobox.Items.DetachFromSourceCollection();
+            
+            groupFkCombobox.ItemsSource = places;
+        }
+
+        private void undoBtn_Click(object sender, RoutedEventArgs e)
+        {
+            iDTBox.Text = String.Empty;
+            nameTBox.Text = String.Empty;
+            typeTBox.Text = String.Empty;
+            groupFkCombobox.SelectedIndex = -1;
+            OK_Btn.Content = "Add New";
+        }
+    }
 
 
 
