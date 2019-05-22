@@ -910,12 +910,13 @@ namespace StoresDatabase
         private void editType_Btn_Click(object sender, RoutedEventArgs e)
         {
             // type created for testing only
-            partType = new ItemType();
-            partType.ID = 4;
-            partType.Name = "AJS Part";
-            partType.typeGroupFK = 1;
+            //partType = new ItemType();
+            //partType.ID = 4;
+            //partType.Name = "AJS Part";
+            //partType.typeGroupFK = 1;
 
-            EditItemTypeDialog typeDialog = new EditItemTypeDialog(partType.ID, partType.Name,partType.typeGroupFK, itemtype);
+            EditItemTypeDialog typeDialog = new EditItemTypeDialog(database);
+            // EditItemTypeDialog typeDialog = new EditItemTypeDialog(partType.ID, partType.Name,partType.typeGroupFK, itemtype);
             if (typeDialog.ShowDialog() == true)
             {
                 String[] results = typeDialog.Answer.Split(',');
@@ -980,14 +981,15 @@ namespace StoresDatabase
         private void editSupplier_Btn_Click(object sender, RoutedEventArgs e)
         {
             // create a supplier for testing only
-            supplier = new Supplier();
-            supplier.Name = "AMC Classic Spares, Steven Sorby";
-            supplier.Address = "Not knowne, Some in , England";
-            supplier.Website = "www.amcclassicspares.com";
-            supplier.Email = "spares@amcclassicspares.com";
-            supplier.phone = "(+44) 01462 811770";
+            //supplier = new Supplier();
+            //supplier.Name = "AMC Classic Spares, Steven Sorby";
+            //supplier.Address = "Not knowne, Some in , England";
+            //supplier.Website = "www.amcclassicspares.com";
+            //supplier.Email = "spares@amcclassicspares.com";
+            //supplier.phone = "(+44) 01462 811770";
 
-            EditSupplierDialog supplierDialog = new EditSupplierDialog(supplier.ID, supplier.Name, supplier.Address, supplier.Website,supplier.Email,supplier.phone);
+            EditSupplierDialog supplierDialog = new EditSupplierDialog(database);
+            // EditSupplierDialog supplierDialog = new EditSupplierDialog(supplier.ID, supplier.Name, supplier.Address, supplier.Website,supplier.Email,supplier.phone);
             if (supplierDialog.ShowDialog() == true)
             {
                 String[] results = supplierDialog.Answer.Split(',');
