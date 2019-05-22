@@ -5,21 +5,21 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:StoresDatabase"
         mc:Ignorable="d"
-        Title="Locations" Height="230" Width="820" ResizeMode="NoResize">
+        Title="Locations" Height="280" Width="820" ResizeMode="NoResize">
     <Grid>
         <TextBox x:Name="iDTBox" HorizontalAlignment="Left" Height="22" Margin="92,25,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="63" IsEnabled="False"/>
         <TextBox x:Name="nameTBox" HorizontalAlignment="Left" Height="22" Margin="92,52,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190" RenderTransformOrigin="0.494,1.909"/>
         <TextBox x:Name="typeTBox" HorizontalAlignment="Left" Height="22" Margin="92,79,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="190"/>
         <ComboBox x:Name="groupFkCombobox" HorizontalAlignment="Left" Height="24" Margin="92,114,0,0" VerticalAlignment="Top" Width="190"/>
         <Button x:Name="OK_Btn" Content="Add New" HorizontalAlignment="Left" Height="20" Margin="33,160,0,0" VerticalAlignment="Top" Width="134" Background="#FF64C355" IsDefault="True" Click="OK_Btn_Click" RenderTransformOrigin="0.546,1.45"/>
-        <Button x:Name="close_Btn" Content="Close" HorizontalAlignment="Left" Height="20" Margin="730,165,0,0" VerticalAlignment="Top" Width="51" RenderTransformOrigin="1.235,0.55" Background="Aquamarine" IsCancel="True"/>
+        <Button x:Name="close_Btn" Content="Close" HorizontalAlignment="Left" Height="42" Margin="730,165,0,0" VerticalAlignment="Top" Width="51" RenderTransformOrigin="1.235,0.55" Background="Aquamarine" IsCancel="True"/>
         <Label x:Name="idlabel" Content="ID" HorizontalAlignment="Left" Height="32" Margin="21,15,0,0" VerticalAlignment="Top" Width="49"/>
         <Label x:Name="loclabel" Content="Location" HorizontalAlignment="Left" Height="32" Margin="10,47,0,0" VerticalAlignment="Top" Width="69"/>
         <Label x:Name="typelabel" Content="Loc Type" HorizontalAlignment="Left" Height="32" Margin="10,69,0,0" VerticalAlignment="Top" Width="69"/>
         <Label x:Name="inlabel" Content="Within " HorizontalAlignment="Left" Height="32" Margin="10,114,0,0" VerticalAlignment="Top" Width="94" RenderTransformOrigin="0.367,2.5"/>
-        <DataGrid x:Name="locationdataGrid" HorizontalAlignment="Left" Height="165" Margin="405,15,0,0" VerticalAlignment="Top" Width="246" SelectionChanged="locationdataGrid_SelectionChanged"/>
-        <Button x:Name="delete_Btn" Content="Delete" HorizontalAlignment="Left" Height="20" Margin="209,160,0,0" VerticalAlignment="Top" Width="73" Background="Red" Click="delete_Btn_Click"/>
-        <Button x:Name="undoBtn" Content="Undo" HorizontalAlignment="Left" Height="20" Margin="302,160,0,0" VerticalAlignment="Top" Width="57" Click="undoBtn_Click"/>
+        <DataGrid x:Name="locationdataGrid" HorizontalAlignment="Left" Height="192" Margin="388,15,0,0" VerticalAlignment="Top" Width="315" SelectionChanged="locationdataGrid_SelectionChanged"/>
+        <Button x:Name="delete_Btn" Content="Delete" HorizontalAlignment="Left" Height="20" Margin="33,187,0,0" VerticalAlignment="Top" Width="73" Background="Red" Click="delete_Btn_Click"/>
+        <Button x:Name="undoBtn" Content="Undo" HorizontalAlignment="Left" Height="47" Margin="256,160,0,0" VerticalAlignment="Top" Width="57" Background="BlanchedAlmond" Click="undoBtn_Click"/>
 
     </Grid>
 </Window>

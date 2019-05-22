@@ -91,9 +91,7 @@ namespace StoresDatabase
         {
             SQLiteCommand sql_cmd = database.CreateCommand();
             String sql_string;
-            // remove this 
-           //  DialogResult = true;
-            // change this to process the values in the textboxes
+            
             // if the TBox is empty then this is a new entry else it is an update
             if (iDTBox.Text == String.Empty)
             {
@@ -127,7 +125,7 @@ namespace StoresDatabase
                     int groupindex = groupFkCombobox.SelectedIndex + 1;
                     if (groupindex == 0)
                     {
-                        sql_string = "UPDATE IN Locations SET Location, = '" + nameTBox.Text +
+                        sql_string = "UPDATE Locations SET Location, = '" + nameTBox.Text +
                             "', Type = '" + typeTBox.Text + "' WHERE locID = '" + index + "';";
                     }
                     else
@@ -166,6 +164,10 @@ namespace StoresDatabase
                 if (groupindex > 0)
                 {
                     groupFkCombobox.SelectedIndex = groupindex - 1;
+                }
+                else
+                {
+                    groupFkCombobox.SelectedIndex = -1;
                 }
                 OK_Btn.Content = "Update";
            }
@@ -266,6 +268,7 @@ namespace StoresDatabase
 
         private void undoBtn_Click(object sender, RoutedEventArgs e)
         {
+            OK_Btn.Content = "Add New";
             iDTBox.Text = String.Empty;
             nameTBox.Text = String.Empty;
             typeTBox.Text = String.Empty;
