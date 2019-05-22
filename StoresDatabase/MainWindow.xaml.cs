@@ -39,7 +39,7 @@ namespace StoresDatabase
         ArrayList places;
         ArrayList suppliers;
         ArrayList itemtype;
-
+        Boolean DB_Connection = false;
         /// IMPORTANT SQLITE NOTE
         /// IT IS ABSOLUTELY ESSENTIAL THAT THE TABLE AND FIELD VALUE
         /// ONLY CONTAIN A-Z AND 1-0
@@ -85,14 +85,7 @@ namespace StoresDatabase
         public MainWindow()
         {
             InitializeComponent();
-            // these ArrayLists  are for testing only
-            places = new ArrayList();
-            places.Add("Box1"); places.Add("Box2"); places.Add("Box3");
-            suppliers = new ArrayList();
-            suppliers.Add("AMOC"); suppliers.Add("AMC"); suppliers.Add("EBAY");
-            itemtype = new ArrayList();
-            itemtype.Add("Part m/c"); itemtype.Add("Tool"); itemtype.Add("Tool consumable");
-
+            
             // version number in connection string  is the SQLite version and needs to be set to 3.
             // Connection = "Data Source =c:\\Databases\\Stock.db;Version=3;New=True;Compress=True;";
             ///  database = new SQLiteConnection(Connection);
@@ -122,7 +115,7 @@ namespace StoresDatabase
             Connection = "Data Source =c:\\Databases\\"+ getDBName.Answer+ ".db;Version=3;New=True;Compress=True;";
             database = new SQLiteConnection(Connection);
             database.Open();
-
+            DB_Connection = true;
             CreateAllTables();
             enableBtnMenu();
         }
@@ -149,7 +142,7 @@ namespace StoresDatabase
             Connection = "Data Source =c:\\Databases\\" + src.Name + ";Version=3;New=True;Compress=True;";
             database = new SQLiteConnection(Connection);
             database.Open();
-
+            DB_Connection = true;
             CreateAllTables();
             // load data from all tables 
             enableBtnMenu();
@@ -792,14 +785,14 @@ namespace StoresDatabase
         private void editLocation_Btn_DragOver(object sender, DragEventArgs e)
         {
             // crete a location for testing only 
-            location = new Location();
-            location.ID = 31;
-            location.Name = "AJS1";
-            location.Type = "PlasticBox";
-            location.groupFK = 1;
+            //location = new Location();
+            //location.ID = 31;
+            //location.Name = "AJS1";
+            //location.Type = "PlasticBox";
+            //location.groupFK = 1;
 
-            EditLocationDialog locationDialog = new EditLocationDialog(location.ID, location.Name, location.Type, location.groupFK, places);
-
+            // EditLocationDialog locationDialog = new EditLocationDialog(location.ID, location.Name, location.Type, location.groupFK, places);
+            EditLocationDialog locationDialog = new EditLocationDialog(database);
             if (locationDialog.ShowDialog() == true)
             {
                 // read answer string and paste it to the Flow Document
@@ -820,14 +813,14 @@ namespace StoresDatabase
         private void editLocation_Btn_Click(object sender, RoutedEventArgs e)
         {
             // crete a location for testing only 
-            location = new Location();
-            location.ID = 31;
-            location.Name = "AJS1";
-            location.Type = "PlasticBox";
-            location.groupFK = 1;
+            //location = new Location();
+            //location.ID = 31;
+            //location.Name = "AJS1";
+            //location.Type = "PlasticBox";
+            //location.groupFK = 1;
 
-            EditLocationDialog locationDialog = new EditLocationDialog(location.ID, location.Name, location.Type, location.groupFK, places);
-
+            //EditLocationDialog locationDialog = new EditLocationDialog(location.ID, location.Name, location.Type, location.groupFK, places);
+            EditLocationDialog locationDialog = new EditLocationDialog(database);
             if (locationDialog.ShowDialog() == true)
             {
                 // read answer string and paste it to the Flow Document
@@ -1049,13 +1042,21 @@ namespace StoresDatabase
 
         private void CloseDB_click(object sender, RoutedEventArgs e)
         {
-            database.Close();
+            if (DB_Connection == true)
+            {
+                database.Close();
+                DB_Connection = false;
+                disbleBtnMenu();
+            }
         }
 
 
         private void  Exit_btn_Click(object sender, RoutedEventArgs e)
         {
-            database.Close();
+            if (DB_Connection == true)
+            {
+                database.Close();
+            }
             this.Close();
         }
 
