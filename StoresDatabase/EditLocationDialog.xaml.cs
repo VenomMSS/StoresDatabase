@@ -24,6 +24,7 @@ namespace StoresDatabase
     {
         SQLiteConnection database;
         DataTable  dt_locations;
+        ItemNameClass place;
         ArrayList places = new ArrayList();
 
         public EditLocationDialog()
@@ -98,16 +99,17 @@ namespace StoresDatabase
                 // this is a new entry 
                 // add to location table
                 MessageBox.Show("This is a new entry ");
-                int groupindex = groupFkCombobox.SelectedIndex + 1;
-                if (groupindex == 0)
+                int groupindex = groupFkCombobox.SelectedIndex ;
+                if (groupindex == -1)
                 {
                     sql_string = "INSERT INTO Locations (Location, Type) VALUES ('"
                     + nameTBox.Text + "', '" + typeTBox.Text +  "');";
                 }
                 else
                 {
+                    ItemNameClass selected = (ItemNameClass)places[groupindex];
                     sql_string = "INSERT INTO Locations (Location, Type, LocationFK) VALUES ('"
-                    + nameTBox.Text + "', '" + typeTBox.Text + "', '" + groupindex + "');";
+                    + nameTBox.Text + "', '" + typeTBox.Text + "', '" + selected.getID() + "');";
                 }
                 MessageBox.Show(sql_string);
                 sql_cmd.CommandText = sql_string;
@@ -122,16 +124,17 @@ namespace StoresDatabase
                 {
                     // update the record at index 
                     MessageBox.Show("This is an update on entry " + index);
-                    int groupindex = groupFkCombobox.SelectedIndex + 1;
-                    if (groupindex == 0)
+                    int groupindex = groupFkCombobox.SelectedIndex ;
+                    if (groupindex == -1)
                     {
                         sql_string = "UPDATE Locations SET Location, = '" + nameTBox.Text +
                             "', Type = '" + typeTBox.Text + "' WHERE locID = '" + index + "';";
                     }
                     else
                     {
+                        ItemNameClass selected = (ItemNameClass)places[groupindex];
                         sql_string = "UPDATE Locations SET Location = '" + nameTBox.Text + "', Type = '" + 
-                            typeTBox.Text+ "', LocationFK = '" + groupindex + "' WHERE locID = '" + index + "';";
+                            typeTBox.Text+ "', LocationFK = '" + selected.getID() + "' WHERE locID = '" + index + "';";
                     }
                     MessageBox.Show(sql_string);
                     sql_cmd.CommandText = sql_string;
@@ -160,19 +163,45 @@ namespace StoresDatabase
                 nameTBox.Text = drv[1].ToString();
                 typeTBox.Text = drv[2].ToString();
                 String groupStr = drv[3].ToString();
-                int groupindex = Int32.Parse("0" + groupStr);
-                if (groupindex > 0)
-                {
-                    groupFkCombobox.SelectedIndex = groupindex - 1;
-                }
-                else
-                {
-                    groupFkCombobox.SelectedIndex = -1;
-                }
+                int groupindex = getIndex(drv[3].ToString(), places);
+                groupFkCombobox.SelectedIndex = groupindex;
                 OK_Btn.Content = "Update";
            }
             
 
+        }
+
+        private int getIndex(String lookfor, ArrayList inlist)
+        {
+            ItemNameClass look_at;
+            int looking_for = 0;
+            int i = 0;
+            bool found = false;
+            int foundindex = -1;
+            try
+            {
+                looking_for = Int32.Parse("0" + lookfor);
+            }
+            catch (Exception e)
+            {
+                looking_for = -1;
+            }
+
+            if (looking_for > 0)
+            {
+                while (i < inlist.Count && found == false)
+                {
+                    look_at = (ItemNameClass)inlist[i];
+                    if (look_at.getID() == looking_for)
+                    {
+                        found = true;
+                        foundindex = i;
+                    }
+                    i++;
+                }
+            }
+
+            return foundindex;
         }
 
         private void delete_Btn_Click(object sender, RoutedEventArgs e)
@@ -259,12 +288,15 @@ namespace StoresDatabase
             places.Clear();
             foreach (DataRow r in dt_locations.Rows)
             {
-                places.Add(r[1].ToString());
+                place = new ItemNameClass(Int32.Parse(r[0].ToString()), r[1].ToString());
+                places.Add(place);
             }
             groupFkCombobox.Items.DetachFromSourceCollection();
             
             groupFkCombobox.ItemsSource = places;
         }
+
+
 
         private void undoBtn_Click(object sender, RoutedEventArgs e)
         {
