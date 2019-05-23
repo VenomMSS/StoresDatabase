@@ -24,10 +24,7 @@ namespace StoresDatabase
     {
         // Database tables
         private static String table_parts = "Item";
-        private static String table_parttype = "ItemType";
-        private static String table_location = "Locations";
-        private static String table_supplier = "Suppliers";
-
+        
         // table_part fields
         private static String field_partName = "Name";
         private static String field_PartDescription = "Description";
