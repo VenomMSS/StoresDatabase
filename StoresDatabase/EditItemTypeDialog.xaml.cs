@@ -24,7 +24,8 @@ namespace StoresDatabase
     {
         SQLiteConnection database;
         DataTable dt_itemTypes;
-        ArrayList itemtypes = new ArrayList(); 
+        ArrayList itemtypes = new ArrayList();
+        ItemNameClass  types;
 
         public EditItemTypeDialog()
         {
@@ -74,8 +75,8 @@ namespace StoresDatabase
             if (iDTBox.Text == string.Empty)
             {
                 // if iDTBox is empty then this is a new record 
-                int grpindex = typeGroupComboBox.SelectedIndex + 1;
-                if (grpindex == 0)
+                int grpindex = typeGroupComboBox.SelectedIndex ;
+                if (grpindex == -1)
                 {
                     // there is no group type selected
                     sql_string = "INSERT INTO ItemType (ItemType) VALUES ('"
@@ -84,8 +85,9 @@ namespace StoresDatabase
                 else
                 {
                     // there is a group selected
+                    ItemNameClass selected = (ItemNameClass) itemtypes[grpindex];
                     sql_string = "INSERT INTO ItemType (ItemType, TypeGroup) VALUES ('"
-                    + typeNameTBox.Text + "', '" + grpindex + "');";
+                    + typeNameTBox.Text + "', '" + selected.getID() + "');";
                 }
                 sql_cmd.CommandText = sql_string;
                 sql_cmd.ExecuteNonQuery();
@@ -96,8 +98,8 @@ namespace StoresDatabase
             // else this is an update
             {
                 int index = Int32.Parse("0"+ iDTBox.Text);
-                int grpindex = typeGroupComboBox.SelectedIndex + 1;
-                if (grpindex == 0)
+                int grpindex = typeGroupComboBox.SelectedIndex;
+                if (grpindex == -1)
                 {
                     // if no group selected
                     sql_string = "UPDATE ItemType SET ItemType = '" + typeNameTBox.Text +
@@ -105,8 +107,9 @@ namespace StoresDatabase
                 }
                 else
                 {
+                    ItemNameClass selected = (ItemNameClass)itemtypes[grpindex];
                     sql_string = "UPDATE ItemType SET ItemType = '" + typeNameTBox.Text + 
-                        "' TypeGroup = '" + grpindex + "' WHERE typeID = '" + index + "';";
+                        "', TypeGroup = '" + selected.getID() + "' WHERE typeID = '" + index + "';";
                 }
                 sql_cmd.CommandText = sql_string;
                 sql_cmd.ExecuteNonQuery();
@@ -158,7 +161,8 @@ namespace StoresDatabase
             itemtypes.Clear();
             foreach (DataRow r in dt_itemTypes.Rows)
             {
-                itemtypes.Add(r[1]);
+                types = new ItemNameClass(Int32.Parse( r[0].ToString()), r[1].ToString());
+                itemtypes.Add(types);
             }
             typeGroupComboBox.ItemsSource = itemtypes;
 
@@ -180,18 +184,45 @@ namespace StoresDatabase
                 iDTBox.Text = drv[0].ToString();
                 typeNameTBox.Text = drv[1].ToString();
                 String group = drv[2].ToString();
-                int groupindex = Int32.Parse("0"+group);
-                if (groupindex > 0)
-                {
-                    typeGroupComboBox.SelectedIndex = groupindex - 1;
-                }
-                else
-                {
-                    typeGroupComboBox.SelectedIndex =  -1;
-                }
+                int groupindex = getIndex(drv[2].ToString(),itemtypes);
+                typeGroupComboBox.SelectedIndex = groupindex;
+                
                 // change button text
                 OK_Btn.Content = "Update";
             }
+        }
+
+        private int getIndex(String lookfor, ArrayList inlist)
+        {
+            ItemNameClass look_at;
+            int looking_for = 0;
+            int i = 0;
+            bool found = false;
+            int foundindex = -1;
+            try
+            {
+                looking_for = Int32.Parse("0" + lookfor);
+            }
+            catch (Exception e)
+            {
+                looking_for = -1;
+            }
+
+            if (looking_for > 0)
+            {
+                while (i < inlist.Count && found == false)
+                {
+                    look_at = (ItemNameClass)inlist[i];
+                    if (look_at.getID() == looking_for)
+                    {
+                        found = true;
+                        foundindex = i;
+                    }
+                    i++;
+                }
+            }
+
+            return foundindex;
         }
 
         private void deleteBtn_Click(object sender, RoutedEventArgs e)

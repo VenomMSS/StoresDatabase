@@ -20,6 +20,7 @@ using StockDBClasses;
 using System.Data;
 
 
+
 namespace StoresDatabase
 {
     /// <summary>
@@ -459,16 +460,30 @@ namespace StoresDatabase
         private void clearBtn_Click(object sender, RoutedEventArgs e)
         {
             // clear data from the datbase
-            DropAllTables();
-            CreateAllTables();
+            //DropAllTables();
+            //CreateAllTables();
+            SQLiteCommand Cmd;
+            Cmd = database.CreateCommand();
+            Cmd.CommandText = "DROP TABLE " + table_parts;
+            Cmd.ExecuteNonQuery();
+
+            Cmd.CommandText = "CREATE TABLE IF NOT EXISTS " + table_parts +
+                " (partID integer primary key, " + field_partName + " TEXT, " +
+                  field_PartDescription + " TEXT, " + field_partUnit + " TEXT, " +
+                  field_SupplierPartNo + " TEXT, " + field_stock + " INTEGER, " +
+                  field_price + " FLOAT, " + field_currency + " TEXT, " +
+                  field_LocFK + " INTEGER, " + field_partTypeFK + " INTEGER, " +
+                  field_SuppFK + " INTEGER, " + field_status + " TEXT);";
+            Cmd.ExecuteNonQuery();
+
         }
 
         private void newItem_Btn_Click(object sender, RoutedEventArgs e)
         { 
             DataTable dt_locations, dt_types, dt_suppliers;
-            places.Clear();
-            itemtype.Clear();
-            suppliers.Clear();
+            places = new ArrayList();
+            itemtype = new ArrayList();
+            suppliers = new ArrayList();
             dt_locations = LoadLocationsFromDB();
             dt_types = LoadPartTypesFromDB();
             dt_suppliers = LoadSuppliersFromDB();
@@ -683,19 +698,17 @@ namespace StoresDatabase
         private void editItem_Btn_Click(object sender, RoutedEventArgs e)
         {
             // for testing only, an item is created
-            testItem = new Item();
-            testItem.ID = 22;                testItem.Name = "Sparkplug";
-            testItem.Description = "good";   testItem.Unit = "box of 12";
-            testItem.Amount = 2;             testItem.Currency = "€";
-            testItem.Price = 22.45;          testItem.PartNumber = "123456";
-            testItem.Status = true;          testItem.typeFK = 0;
-            testItem.locFK = 1;              testItem.supFK = 1;
+            //testItem = new Item();
+            //testItem.ID = 22;                testItem.Name = "Sparkplug";
+            //testItem.Description = "good";   testItem.Unit = "box of 12";
+            //testItem.Amount = 2;             testItem.Currency = "€";
+            //testItem.Price = 22.45;          testItem.PartNumber = "123456";
+            //testItem.Status = true;          testItem.typeFK = 0;
+            //testItem.locFK = 1;              testItem.supFK = 1;
             
                         
             
-            EditItemDialog itemDialog = new EditItemDialog(testItem.ID,testItem.Name,testItem.Description,testItem.Unit,
-                testItem.PartNumber,testItem.Amount,testItem.Price,testItem.Currency,testItem.Status.ToString(),
-                testItem.locFK,testItem.typeFK,testItem.supFK,places,itemtype,suppliers);
+            EditItemDialog itemDialog = new EditItemDialog(database);
             if (itemDialog.ShowDialog() == true)
             {
                 // read answer string and paste it to the Flow Document
