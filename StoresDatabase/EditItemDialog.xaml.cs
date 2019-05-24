@@ -14,6 +14,8 @@ using System.Windows.Shapes;
 using System.Collections;
 using System.Data.SQLite;
 using System.Data;
+using Microsoft.Win32;
+using System.IO;
 
 namespace StoresDatabase
 {
@@ -24,7 +26,10 @@ namespace StoresDatabase
     {
         // Database tables
         private static String table_parts = "Item";
-        
+        private static String table_parttype = "ItemType";
+        private static String table_location = "Locations";
+        private static String table_supplier = "Suppliers";
+
         // table_part fields
         private static String field_partName = "Name";
         private static String field_PartDescription = "Description";
@@ -38,8 +43,25 @@ namespace StoresDatabase
         private static String field_SuppFK = "SupplierFK";
         private static String field_status = "Status";
 
+        // table_location fields
+        private static String field_locName = "Location";
+        private static String field_locType = "Type";
+        private static String field_InLocationFK = "LocationFK";
+
+        // table_supplier fields
+        private static string field_SupName = "Supplier";
+        private static string field_SupAddress = "Address";
+        private static string field_Supwebsite = "Web";
+        private static string field_Supemail = "Email";
+        private static string field_SupTel = "Tel";
+
+        // table_parttype fields
+        private static String field_parttype = "ItemType";
+        private static String field_typeGroupFK = "TypeGroup";
+
         SQLiteConnection database;
         DataTable dt_items;
+        OpenFileDialog openFileDlg;
         ItemNameClass places, types, suppliers;
         ArrayList placelist, typelist, supplierlist;
 
@@ -382,6 +404,217 @@ namespace StoresDatabase
                 }
             }
         }
+
+        private void fileBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // this is called by the FileOpenButton
+            // OPen a file and read the contents
+            // Firstly need a Openfile dialog
+            openFileDlg = new OpenFileDialog();
+            openFileDlg.FileOk += openToDBFile;
+            openFileDlg.Title = "Open File";
+            openFileDlg.Filter = "CSV Files(*.csv)|*.csv|Text file(*.txt)|*.txt|All Files(*.*)|*.*";
+
+            openFileDlg.ShowDialog();
+        }
+
+        // copied from main window
+        private void openToDBFile(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            string fullPathname = openFileDlg.FileName;
+            
+            FileInfo src = new FileInfo(fullPathname);
+
+            string line;
+            TextReader reader = src.OpenText();
+            SQLiteCommand sql_cmd = database.CreateCommand();
+            String sql_string;
+            int loc_index, type_index, sup_index;
+            line = reader.ReadLine();
+            while (line != null)
+            {
+                // add to the database
+                string[] fields = line.Split(',');
+                loc_index = findLocation(fields[7]);
+                type_index = findType(fields[8]);
+                sup_index = findSupplier(fields[9]);
+                // produce the common part of command string for an insert
+                sql_string = "INSERT INTO " + table_parts + " (" + field_partName + ", " +
+                    field_PartDescription + ", " + field_partUnit + ", " + field_SupplierPartNo + ", " +
+                    field_stock + ", " + field_price + ", " + field_currency + ", " + field_status;
+
+                if (loc_index != -1)
+                {
+                    // there is a location
+                    if (type_index != -1)
+                    {
+                        // there is location and type
+                        if (sup_index != -1)
+                        {
+                            // there is location and type and supplier
+                            sql_string = sql_string + ", " + field_LocFK + ", " + field_partTypeFK + ", " + field_SuppFK + ") VALUES ('";
+                            sql_string = sql_string + fields[0] + "', '" + fields[1] + "', '" + fields[2] + "', '" + fields[3] + "', '" +
+                            fields[4] + "', '" + fields[5] + "', '" + fields[6] + "', '" + fields[10] + "', '" + loc_index + "', '" + type_index +
+                             "', '" + sup_index +  "' );";
+                        }
+                        else
+                        {
+                            // there is location and type but no supplier
+                            sql_string = sql_string + ", " + field_LocFK + ", " + field_partTypeFK +  ") VALUES ('";
+                            sql_string = sql_string + fields[0] + "', '" + fields[1] + "', '" + fields[2] + "', '" + fields[3] + "', '" +
+                            fields[4] + "', '" + fields[5] + "', '" + fields[6] + "', '" + fields[10] + "', '" + loc_index + "', '" + type_index + "' );";
+                        }
+                    }
+                    else
+                    {
+                        // there is location but no type
+                        if (sup_index != -1)
+                        {
+                            // there is location but no type and there is supplier
+                            sql_string = sql_string + ", " + field_LocFK +  ", " + field_SuppFK + ") VALUES ('";
+                            sql_string = sql_string + fields[0] + "', '" + fields[1] + "', '" + fields[2] + "', '" + fields[3] + "', '" +
+                            fields[4] + "', '" + fields[5] + "', '" + fields[6] + "', '" + fields[10] + "', '" + loc_index + "', '" + sup_index + "' );";
+                        }
+                        else
+                        {
+                            // there is location but no type no supplier
+                            sql_string = sql_string + ", " + field_LocFK +  ") VALUES ('";
+                            sql_string = sql_string + fields[0] + "', '" + fields[1] + "', '" + fields[2] + "', '" + fields[3] + "', '" +
+                            fields[4] + "', '" + fields[5] + "', '" + fields[6] + "', '" + fields[10] + "', '" + loc_index + "' );";
+                        }
+                    }
+                }
+                else
+                {
+                    //there is No location
+                    if (type_index != -1)
+                    {
+                        // there is no location but there is  type
+                        if (sup_index != -1)
+                        {
+                            // there is no location but there is  type and  supplier
+                            sql_string = sql_string + ", " + field_partTypeFK + ", " + field_SuppFK + ") VALUES ('";
+                            sql_string = sql_string + fields[0] + "', '" + fields[1] + "', '" + fields[2] + "', '" + fields[3] + "', '" +
+                            fields[4] + "', '" + fields[5] + "', '" + fields[6] + "', '" + fields[10] +  "', '" + type_index +
+                             "', '" + sup_index + "' );";
+                        }
+                        else
+                        {
+                            // there is no location but there is  type but no supplier
+                            sql_string = sql_string + ", " + field_partTypeFK +  ") VALUES ('";
+                            sql_string = sql_string + fields[0] + "', '" + fields[1] + "', '" + fields[2] + "', '" + fields[3] + "', '" +
+                            fields[4] + "', '" + fields[5] + "', '" + fields[6] + "', '" + fields[10]  + "', '" + type_index + "' );";
+                        }
+                    }
+                    else
+                    {
+                        // there is no location and  no type
+                        if (sup_index != -1)
+                        {
+                            // there is no location and  no type but there is supplier
+                            sql_string = sql_string + ", " + field_SuppFK + ") VALUES ('";
+                            sql_string = sql_string + fields[0] + "', '" + fields[1] + "', '" + fields[2] + "', '" + fields[3] + "', '" +
+                            fields[4] + "', '" + fields[5] + "', '" + fields[6] + "', '" + fields[10] + "', '" + sup_index + "' );";
+
+                        }
+                        else
+                        {
+                            // there is no location and  no type and no supplier
+                            sql_string = sql_string +  ") VALUES ('";
+                            sql_string = sql_string + fields[0] + "', '" + fields[1] + "', '" + fields[2] + "', '" + fields[3] + "', '" +
+                            fields[4] + "', '" + fields[5] + "', '" + fields[6] + "', '" + fields[10] +  "' );";
+                        }
+                    }
+                }
+                                
+                sql_cmd.CommandText = sql_string;
+                sql_cmd.ExecuteNonQuery();
+
+
+                // read next line
+                line = reader.ReadLine();
+
+            }
+            reader.Close();
+            LoadDataGrid();
+        }
+
+        public int findLocation(String lookingfor)
+        {
+            int found = -1;
+            DataTable dt_found = new DataTable("Locations");
+
+            String cmd_String, foundrow;
+            SQLiteCommand sqlCmd;
+            foundrow = null;
+            sqlCmd = database.CreateCommand();
+            cmd_String = "SELECT * FROM " + table_location + " WHERE " + field_locName
+                + " = '" + lookingfor + "'; ";
+            sqlCmd.CommandText = cmd_String;
+            SQLiteDataReader datareader = sqlCmd.ExecuteReader();
+            if (datareader.HasRows)
+            {
+                // record found for this compnumber
+                while (datareader.Read())
+                {
+                    foundrow = datareader["locID"].ToString();
+                    found = Int32.Parse(foundrow);
+                }
+            }
+
+            return found;
+        }
+
+        public int findType(String lookingfor)
+        {
+            int found = -1;
+            DataTable dt_found = new DataTable("Types");
+
+            String cmd_String, foundrow;
+            SQLiteCommand sqlCmd;
+            foundrow = null;
+            sqlCmd = database.CreateCommand();
+            cmd_String = "SELECT * FROM " + table_parttype + " WHERE " + field_parttype
+                + " = '" + lookingfor + "'; ";
+            sqlCmd.CommandText = cmd_String;
+            SQLiteDataReader datareader = sqlCmd.ExecuteReader();
+            if (datareader.HasRows)
+            {
+                // record found for this compnumber
+                while (datareader.Read())
+                {
+                    foundrow = datareader["typeID"].ToString();
+                    found = Int32.Parse(foundrow);
+                }
+            }
+            return found;
+        }
+
+        public int findSupplier(String lookingfor)
+        {
+            int found = -1;
+            DataTable dt_found = new DataTable("Suppliers");
+
+            String cmd_String, foundrow;
+            SQLiteCommand sqlCmd;
+            foundrow = null;
+            sqlCmd = database.CreateCommand();
+            cmd_String = "SELECT * FROM " + table_supplier + " WHERE " + field_SupName
+                + " = '" + lookingfor + "'; ";
+            sqlCmd.CommandText = cmd_String;
+            SQLiteDataReader datareader = sqlCmd.ExecuteReader();
+            if (datareader.HasRows)
+            {
+                // record found for this compnumber
+                while (datareader.Read())
+                {
+                    foundrow = datareader["supID"].ToString();
+                    found = Int32.Parse(foundrow);
+                }
+            }
+            return found;
+        }
+
 
         private void itemsDataGrid_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
