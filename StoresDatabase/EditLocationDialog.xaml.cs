@@ -60,23 +60,9 @@ namespace StoresDatabase
             iDTBox.Text = "";
             nameTBox.Text = "";
             typeTBox.Text = "";
-            //groupFkCombobox.ItemsSource = withinlocations;
-            //groupFkCombobox.SelectedIndex = index;
-            // populate the datagrid with current locations
+            
             LoadDatagrid();
-            //SQLiteCommand sql_cmd = database.CreateCommand();
-            //String sql_string;
-            //sql_string = "SELECT * FROM Locations";
-            //sql_cmd.CommandText = sql_string;
-            //SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
-            //adapter.Fill(dt_locations);
-            //locationdataGrid.ItemsSource = dt_locations.DefaultView;
-            //places = new ArrayList();
-            //foreach (DataRow r in dt_locations.Rows)
-            //{
-            //    places.Add(r[1].ToString());
-            //}
-            //groupFkCombobox.ItemsSource = places;
+            
         }
 
 
@@ -98,7 +84,7 @@ namespace StoresDatabase
             {
                 // this is a new entry 
                 // add to location table
-                MessageBox.Show("This is a new entry ");
+                // MessageBox.Show("This is a new entry ");
                 int groupindex = groupFkCombobox.SelectedIndex ;
                 if (groupindex == -1)
                 {
@@ -111,7 +97,7 @@ namespace StoresDatabase
                     sql_string = "INSERT INTO Locations (Location, Type, LocationFK) VALUES ('"
                     + nameTBox.Text + "', '" + typeTBox.Text + "', '" + selected.getID() + "');";
                 }
-                MessageBox.Show(sql_string);
+                // MessageBox.Show(sql_string);
                 sql_cmd.CommandText = sql_string;
                 sql_cmd.ExecuteNonQuery();
                 LoadDatagrid();
@@ -123,7 +109,7 @@ namespace StoresDatabase
                 int index = Int32.Parse("0" + iDTBox.Text);
                 {
                     // update the record at index 
-                    MessageBox.Show("This is an update on entry " + index);
+                    // MessageBox.Show("This is an update on entry " + index);
                     int groupindex = groupFkCombobox.SelectedIndex ;
                     if (groupindex == -1)
                     {
@@ -136,7 +122,7 @@ namespace StoresDatabase
                         sql_string = "UPDATE Locations SET Location = '" + nameTBox.Text + "', Type = '" + 
                             typeTBox.Text+ "', LocationFK = '" + selected.getID() + "' WHERE locID = '" + index + "';";
                     }
-                    MessageBox.Show(sql_string);
+                    // MessageBox.Show(sql_string);
                     sql_cmd.CommandText = sql_string;
                     sql_cmd.ExecuteNonQuery();
                     LoadDatagrid();
@@ -158,7 +144,7 @@ namespace StoresDatabase
             int selected_row = locationdataGrid.SelectedIndex ;
             foreach (DataRowView drv in locationdataGrid.SelectedItems)
             {
-                MessageBox.Show("This  " + selected_row + "  " + drv[0] + "  " + drv[1] + "  " + drv[2]);
+                // MessageBox.Show("This  " + selected_row + "  " + drv[0] + "  " + drv[1] + "  " + drv[2]);
                 iDTBox.Text = drv[0].ToString();
                 nameTBox.Text = drv[1].ToString();
                 typeTBox.Text = drv[2].ToString();

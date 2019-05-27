@@ -37,9 +37,10 @@ namespace StoresDatabase
         Supplier supplier;
         ItemType partType;
         Order order;
-        ArrayList places;
-        ArrayList suppliers;
-        ArrayList itemtype;
+        ArrayList placeList;
+        ArrayList supplierlist;
+        ArrayList typelist;
+        DataTable dt_items, dt_locations, dt_types, dt_suppliers;
         Boolean DB_Connection = false;
         /// IMPORTANT SQLITE NOTE
         /// IT IS ABSOLUTELY ESSENTIAL THAT THE TABLE AND FIELD VALUE
@@ -109,6 +110,8 @@ namespace StoresDatabase
             {
                 Paragraph para = new Paragraph();
                 para.Inlines.Add(getDBName.Answer + '\n');
+                dbnametextBox.Text = getDBName.Answer;
+                dbnametextBox.Text = "my data";
                 ViewDoc.Blocks.Add(para);
             }
 
@@ -119,6 +122,10 @@ namespace StoresDatabase
             DB_Connection = true;
             CreateAllTables();
             enableBtnMenu();
+            LoadAll();
+            
+
+
         }
 
         private void OpenDBase_Click(object sender, RoutedEventArgs e)
@@ -147,6 +154,8 @@ namespace StoresDatabase
             CreateAllTables();
             // load data from all tables 
             enableBtnMenu();
+            LoadAll();
+            dbnametextBox.Text = src.Name;
 
         }
 
@@ -282,6 +291,56 @@ namespace StoresDatabase
 
             return found;
         }
+
+        private DataTable LoadDatagrid()
+        {
+            // read data from the items table and populate the datagrid
+            // this method is called by LoadAlldata method
+            DataTable found = new DataTable("Items");
+            SQLiteCommand sql_cmd = database.CreateCommand();
+            String sql_string;
+            sql_string = "SELECT *  FROM Item";
+            sql_cmd.CommandText = sql_string;
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
+            adapter.Fill(found);
+            return found;
+
+        }
+
+        private void LoadAll()
+        {
+            dt_items = LoadDatagrid();
+            itemsDataGrid.ItemsSource = dt_items.DefaultView;
+
+            dt_locations = LoadLocationsFromDB();
+            placeList = new ArrayList();
+            foreach (DataRow r in dt_locations.Rows)
+            {
+                ItemNameClass place = new ItemNameClass(Int32.Parse(r[0].ToString()), r[1].ToString());
+                placeList.Add(place);
+            }
+            locationComboBox.ItemsSource = placeList;
+
+            dt_types = LoadPartTypesFromDB();
+            typelist = new ArrayList();
+            foreach (DataRow r in dt_types.Rows)
+            {
+                ItemNameClass itemtype = new ItemNameClass(Int32.Parse(r[0].ToString()), r[1].ToString());
+                typelist.Add(itemtype);
+            }
+            typeComboBox.ItemsSource = typelist;
+
+            dt_suppliers = LoadSuppliersFromDB();
+            supplierlist = new ArrayList();
+            foreach(DataRow r in dt_suppliers.Rows)
+            {
+                ItemNameClass sup = new ItemNameClass(Int32.Parse(r[0].ToString()), r[1].ToString());
+                supplierlist.Add(sup);
+            }
+            supplierComboBox.ItemsSource = supplierlist;
+
+        }
+
 
         public int findType(String lookingfor)
         {
@@ -450,9 +509,6 @@ namespace StoresDatabase
 
         
 
-   
-       
-
         private void editType_Btn_Click(object sender, RoutedEventArgs e)
         {
             // this method is called to create an EditItemTypeDialog 
@@ -500,13 +556,191 @@ namespace StoresDatabase
             }
         }
 
-        private void search_Btn_Click(object sender, RoutedEventArgs e)
+               
+
+        private void searchBtn_Click(object sender, RoutedEventArgs e)
         {
-            SearchWindow searchWindow = new SearchWindow(database);
-            searchWindow.Show();
+            // This method used the text entered into the LookFor Textbox and searched for it in
+            // both the 'Name' and 'description' columns
+            // using 'Like' in the Select commande allows for matching anywhere in those fields.
+
+            String searchitem = lookforTBox.Text;
+            if (searchitem != "")
+             {
+                // should reset other controls 
+                locationComboBox.SelectedIndex = -1;
+                typeComboBox.SelectedIndex = -1;
+                supplierComboBox.SelectedIndex = -1;
+
+                DataTable dt_found = new DataTable();
+                // itemDataGrid.Items.Clear();
+                SQLiteCommand sql_cmd = database.CreateCommand();
+                String sql_string;
+                sql_string = "SELECT * FROM Item WHERE Name LIKE '%" + searchitem +
+                    "%'  COLLATE NOCASE OR Description LIKE '%" + searchitem + "%'; ";
+                sql_cmd.CommandText = sql_string;
+                SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
+                adapter.Fill(dt_found);
+                itemsDataGrid.ItemsSource = dt_found.DefaultView;
+            }
         }
 
-               
+        private void locationComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // called when user has selected a location in the location combo box.
+            // should reset other controls 
+            
+
+            int selected = locationComboBox.SelectedIndex;
+
+            if (selected != -1)
+            {
+                lookforTBox.Text = String.Empty;
+                typeComboBox.SelectedIndex = -1;
+                supplierComboBox.SelectedIndex = -1;
+                // confirmed selection made
+                ItemNameClass loc = (ItemNameClass)locationComboBox.SelectedItem;
+                int loc_ID = loc.getID();
+                DataTable dt_found = new DataTable();
+                dt_found = retrieveItemsByLocation(loc_ID);
+                itemsDataGrid.ItemsSource = dt_found.DefaultView;
+            }
+        }
+
+        
+
+        private DataTable retrieveItemsByLocation(int i)
+        {
+            DataTable cummulative = new DataTable();
+            DataTable dt_retrievelocations = new DataTable();
+            SQLiteCommand sql_cmd = database.CreateCommand();
+            String sql_string;
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
+            sql_string = "SELECT * FROM Item WHERE LocationFK = '" + i + "'; ";
+            sql_cmd.CommandText = sql_string;
+            adapter.Fill(cummulative);
+
+            // need to check for any location which refers back to this location
+            sql_string = "SELECT * FROM Locations WHERE LocationFK = '" + i + "'; ";
+            sql_cmd.CommandText = sql_string;
+            adapter.Fill(dt_retrievelocations);
+            // if there are any locations returned then call this method recursively to get the item records
+            if (dt_retrievelocations.Rows.Count != 0)
+
+            {
+                DataTable temp = new DataTable();
+                foreach (DataRow r in dt_retrievelocations.Rows)
+                {
+                    temp = retrieveItemsByLocation(Int32.Parse(r[0].ToString()));
+                    foreach (DataRow dr in temp.Rows)
+                    {
+                        cummulative.ImportRow(dr);
+                    }
+                }
+            }
+            return cummulative;
+        }
+
+        private void typeComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // user has made aselection of type in the type combo box.
+            // should reset other control to avoid confusion
+            
+
+            int selected = typeComboBox.SelectedIndex;
+            if (selected !=-1)
+            {
+                lookforTBox.Text = String.Empty;
+                locationComboBox.SelectedIndex = -1;
+                supplierComboBox.SelectedIndex = -1;
+                ItemNameClass typ = (ItemNameClass)typeComboBox.SelectedItem;
+                int type_ID = typ.getID();
+                DataTable dt_found = new DataTable();
+                dt_found = retrieveItemsByType(type_ID);
+                itemsDataGrid.ItemsSource = dt_found.DefaultView;
+            }
+            
+
+        }
+
+       
+
+        private DataTable retrieveItemsByType(int i)
+        {
+            DataTable dt_cummulative = new DataTable();
+            DataTable dt_retrieveTypes = new DataTable();
+            SQLiteCommand sql_cmd = database.CreateCommand();
+            String sql_string;
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sql_cmd);
+            sql_string = "SELECT * FROM Item WHERE "+ field_partTypeFK+ " = '" + i + "'; ";
+            sql_cmd.CommandText = sql_string;
+            adapter.Fill(dt_cummulative);
+
+            // need to check for any type which refers back to this type
+            sql_string = "SELECT * FROM "+ table_parttype + " WHERE "+ field_typeGroupFK+" = '" + i + "'; ";
+            sql_cmd.CommandText = sql_string;
+            adapter.Fill(dt_retrieveTypes);
+            // if any type records found then this method needs to be called , recursively, on 
+            // that type ID
+            if (dt_retrieveTypes.Rows.Count != 0)
+            {
+                DataTable dt_temp = new DataTable();
+                foreach (DataRow r in dt_retrieveTypes.Rows)
+                {
+                    dt_temp = retrieveItemsByType(Int32.Parse(r[0].ToString()));
+                    // and any returned rows to the cumulative datatable
+                    foreach (DataRow dr in dt_temp.Rows)
+                    {
+                        dt_cummulative.ImportRow(dr);
+                    }
+                }
+            }
+            return dt_cummulative;
+
+        }
+
+        private void supplierComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // user has made a selection of supplier in the supplier combo box.
+            // should reset other control to avoid confusion
+            
+
+            int selected = supplierComboBox.SelectedIndex;
+            if (selected != -1)
+            {
+                lookforTBox.Text = String.Empty;
+                locationComboBox.SelectedIndex = -1;
+                typeComboBox.SelectedIndex = -1;
+                ItemNameClass sup = (ItemNameClass)supplierComboBox.SelectedItem;
+                int supp_Id = sup.getID();
+                DataTable dt_found = new DataTable();
+                dt_found = retrieveItemsBySupplier(supp_Id);
+                itemsDataGrid.ItemsSource = dt_found.DefaultView;
+
+            }
+        }
+
+        private DataTable retrieveItemsBySupplier(int i)
+        {
+            DataTable dt_cumulative = new DataTable();
+            SQLiteCommand sqlcmd = database.CreateCommand();
+            sqlcmd.CommandText = "SELECT * FROM " + table_parts + " WHERE " + field_SuppFK +
+                " = '" + i + "'; ";
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sqlcmd);
+            adapter.Fill(dt_cumulative);
+            return dt_cumulative;
+        }
+
+        private void showAllBtn_Click(object sender, RoutedEventArgs e)
+        {
+            // show all items
+            DataTable dt_allitems = new DataTable();
+            SQLiteCommand sqlcmd = database.CreateCommand();
+            sqlcmd.CommandText = "SELECT * FROM " + table_parts + "; ";
+            SQLiteDataAdapter adapter = new SQLiteDataAdapter(sqlcmd);
+            adapter.Fill(dt_allitems);
+            itemsDataGrid.ItemsSource = dt_allitems.DefaultView;
+        }
 
         private void enableBtnMenu()
         {
@@ -517,8 +751,15 @@ namespace StoresDatabase
             editType_Btn.IsEnabled = true;
             editSupplier_Btn.IsEnabled = true;
             clearBtn.IsEnabled = true;
+
+            searchBtn.IsEnabled = true;
+            showAllBtn.IsEnabled = true;
+            lookforTBox.IsEnabled = true;
+            locationComboBox.IsEnabled = true;
+            typeComboBox.IsEnabled = true;
+            supplierComboBox.IsEnabled = true;
+
             
-            search_Btn.IsEnabled = true;
         }
 
         private void disbleBtnMenu()
@@ -529,8 +770,15 @@ namespace StoresDatabase
             editType_Btn.IsEnabled = false;
             editSupplier_Btn.IsEnabled = false;
             clearBtn.IsEnabled = false;
+
+            searchBtn.IsEnabled = false;
+            showAllBtn.IsEnabled = false;
+            lookforTBox.IsEnabled = false;
+            locationComboBox.IsEnabled = false;
+            typeComboBox.IsEnabled = false;
+            supplierComboBox.IsEnabled = false;
+
             
-            search_Btn.IsEnabled = false;
         }
 
         private void CloseDB_click(object sender, RoutedEventArgs e)
@@ -539,6 +787,7 @@ namespace StoresDatabase
             {
                 database.Close();
                 DB_Connection = false;
+                dbnametextBox.Text = "<no open database>";
                 disbleBtnMenu();
             }
         }
