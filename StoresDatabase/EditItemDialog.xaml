@@ -35,7 +35,15 @@
         <Button x:Name="undoBtn" Content="Undo" HorizontalAlignment="Left" Height="20" Margin="226,319,0,0" VerticalAlignment="Top" Width="64" Background="Bisque" Click="undoBtn_Click"/>
         <Button x:Name="deleteBtn" Content="Delete" HorizontalAlignment="Left" Height="20" Margin="28,357,0,0" VerticalAlignment="Top" Width="79" Background="Red" Click="deleteBtn_Click"/>
         <Button x:Name="fileBtn" Content="From File" HorizontalAlignment="Left" Height="20" Margin="168,357,0,0" VerticalAlignment="Top" Width="122" Background="BurlyWood" Click="fileBtn_Click"/>
-        <DataGrid x:Name="itemsDataGrid" HorizontalAlignment="Left" Height="326" Margin="349,13,0,0" VerticalAlignment="Top" Width="548" SelectionChanged="itemsDataGrid_SelectionChanged"/>
-
+        <DataGrid x:Name="itemsDataGrid" HorizontalAlignment="Left" Height="326" Margin="349,13,0,0" VerticalAlignment="Top" Width="548" SelectionChanged="itemsDataGrid_SelectionChanged" AutoGenerateColumns="False">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Item" Binding="{Binding Name}" Width="90" />
+                <DataGridTextColumn Header="Part#" Binding="{Binding PartNo}" Width="120" />
+                <DataGridTextColumn Header="Size" Binding="{Binding Unit}" Width="60" />
+                <DataGridTextColumn Header="Stock" Binding="{Binding Amount}" Width="50" />
+                <DataGridTextColumn Header="Notes" Binding="{Binding Description}" Width="120" />
+                <DataGridTextColumn Header="Status" Binding="{Binding Status}" Width="50" />
+            </DataGrid.Columns>
+        </DataGrid>
     </Grid>
 </Window>
